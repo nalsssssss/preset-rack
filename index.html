@@ -87,8 +87,8 @@
 
 <div class="combo" id="comboBanner">
   <div class="combo-txt">
-    <b>2x1 — llevate dos por $15.000</b>
-    <span class="mono" id="comboHint">Tocá dos presets de la lista de abajo para elegirlos</span>
+    <b>Combo x2 — llevate dos por $15.000</b>
+    <span class="mono" id="comboHint">Tocá dos presets de la lista de abajo para aplicar el descuento</span>
   </div>
   <span class="mono" id="comboCount" style="opacity:.7;">0/2 elegidos</span>
 </div>
@@ -113,9 +113,9 @@
 <div class="combo-bar" id="comboBar">
   <div>
     <b id="comboBarNames">—</b>
-    <span>Promo 2x1 seleccionada ($15.000)</span>
+    <span>Combo x2 seleccionado ($15.000)</span>
   </div>
-  <button id="comboBarBtn">Confirmar 2x1 y Pagar</button>
+  <button id="comboBarBtn">Confirmar Combo y Pagar</button>
 </div>
 
 <!-- VENTANITA EMERGENTE (MODAL) -->
@@ -179,7 +179,7 @@
     btnMpDirect.textContent = 'Pagar en Mercado Pago';
 
     if (names.length === 2) {
-      modalTitle.textContent = "Promo 2x1 — $15.000";
+      modalTitle.textContent = "Combo x2 — $15.000";
       modalText.innerHTML = `<strong>Presets elegidos:</strong><br>- ${names[0]}<br>- ${names[1]}`;
     } else {
       modalTitle.textContent = "Comprar: " + names[0];
