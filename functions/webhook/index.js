@@ -44,22 +44,32 @@ export async function onRequest(context) {
     if (info.status === 'approved') {
       let presetsList = [];
 
+      // 1. Intentar sacar de metadata
       if (info.metadata?.presets) {
         presetsList = info.metadata.presets.split(',').map(s => s.trim());
       }
       
+      // 2. Intentar sacar de additional_info.items
       if (presetsList.length === 0 && info.additional_info?.items) {
         presetsList = info.additional_info.items
           .map(item => item.title || '')
-          .map(t => t.replace('Preset:', '').replace('2x1:', '').trim());
+          .map(t => t.replace(/preset:|2x1:/gi, '').trim());
       }
 
+      // 3. Intentar sacar de description
       if (presetsList.length === 0 && info.description) {
-        presetsList = [info.description.replace('Preset:', '').trim()];
+        presetsList = [info.description.replace(/preset:|2x1:/gi, '').trim()];
       }
 
-      if (presetsList.length === 0 || !presetsList[0]) {
-        presetsList = ["ENZOCEROBULTO"];
+      // 4. Búsqueda profunda inteligente por si el título viene con formato libre o de la API
+      if (presetsList.length === 0 || !presetsList[0] || presetsList[0] === 'Preset Rack') {
+        const rawJsonString = JSON.stringify(info).toUpperCase();
+        const foundKey = Object.keys(linksDrive).find(k => rawJsonString.includes(k.toUpperCase()));
+        if (foundKey) {
+          presetsList = [foundKey];
+        } else {
+          presetsList = ["HUNTR"]; // Respaldo dinámico
+        }
       }
 
       const email = info.payer?.email || info.metadata?.email || 'nadiirriios@gmail.com';
@@ -67,9 +77,9 @@ export async function onRequest(context) {
       const linksHtml = presetsList
         .map(p => {
           const cleanP = p.toUpperCase();
-          const matchKey = Object.keys(linksDrive).find(k => cleanP.includes(k.toUpperCase()));
-          const finalKey = matchKey || "ENZOCEROBULTO";
-          const linkUrl = linksDrive[finalKey];
+          const matchKey = Object.keys(linksDrive).find(k => cleanP.includes(k.toUpperCase()) || k.toUpperCase().includes(cleanP));
+          const finalKey = matchKey || presetsList[0] || "HUNTR";
+          const linkUrl = linksDrive[finalKey] || linksDrive["HUNTR"];
           return `<b>${finalKey}</b><br><a href="${linkUrl}" target="_blank">${linkUrl}</a>`;
         })
         .join('<br><br>');
