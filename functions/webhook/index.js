@@ -19,7 +19,7 @@ const linksDrive = {
   "TURROBABY": "https://drive.google.com/drive/folders/1ZePTU1CDC3DXyB-YYudWyOHOIDSbyO_E?usp=drive_link",
   "C.R.O": "https://drive.google.com/drive/folders/1WDUSKtcpVj9ivxgLWsqzNVg8GDO4FPra?usp=drive_link",
   "LIL PEEP (your favorite dress)": "https://drive.google.com/drive/folders/1TtcEfeXSpySJQ2ey0XEVMWPLVpt6jVnY?usp=sharing",
-  "ROJUU (melasuda)": "https://drive.google.com/drive/folders/1jlRMcfx5KsDIqoPTABgyjR1qjS62u86n?usp=sharing",
+  "ROJUU (melasuda)": "https://drive.google.com/drive/folders/1jlRMcfx5KsDIqoPTABgyjR1qjS62u86n?usp=drive_link",
   "DETROIT (mechayrxmeo)": "https://drive.google.com/drive/folders/1kWwnB44kAsYQnxIjxoXStO29F8VkVzDj?usp=sharing",
   "SWAGGERBOYZ": "https://drive.google.com/drive/folders/1gZTAj5rREws4nkpda08F28VAC5iGJQiH?usp=sharing",
   "ZELL": "https://drive.google.com/drive/folders/1UOc5PMeaDr3-H6j0g2jmqkMVrIwr8mC0?usp=sharing",
@@ -59,6 +59,7 @@ export async function onRequest(context) {
         ? 'Tus presets de Preset Rack'
         : `Aquí tienes tu preset: ${presetsList[0] || 'Preset Rack'}`;
 
+      // ACÁ ESTABAN FALTANDO LOS SALTOS DE LÍNEA CLAROS
       const emailBody = `¡Gracias por tu compra!\n\nDescargá tu(s) archivo(s) de FL Studio acá:\n\n${linksTexto}\n\nCualquier duda, respondé a este correo.`;
 
       await fetch('https://api.resend.com/emails', {
