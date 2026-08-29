@@ -124,19 +124,20 @@
     <h3 id="modalTitle">Estás por comprar</h3>
     <p id="modalText">
       <strong>Instrucciones:</strong><br>
-      Tocá el botón de abajo para completar el pago de forma segura en Mercado Pago.
+      Ingresá tu mail (ahí te llega el archivo apenas se acredite el pago) y tocá el botón para ir a pagar.
     </p>
-    
-    <a href="#" class="modal-action-btn btn-mp" id="btnMpDirect" target="_blank">Pagar en Mercado Pago</a>
-    
+
+    <input type="email" id="emailInput" placeholder="tu-mail@ejemplo.com" required
+      style="width:100%; padding:13px 14px; margin-bottom:14px; border:1px solid var(--line); border-radius:10px; font-family:'Space Grotesk',sans-serif; font-size:15px;">
+
+    <button class="modal-action-btn btn-mp" id="btnMpDirect">Pagar en Mercado Pago</button>
+    <p id="modalError" style="color:#c0392b; font-size:13px; margin:8px 0 0; display:none;"></p>
+
     <button class="btn-close-modal" id="btnCloseModal">Cancelar</button>
   </div>
 </div>
 
 <script>
-  const LINK_1 = "https://mpago.la/2FYxmUg";  
-  const LINK_2X1 = "https://mpago.la/28iDmjm"; 
-
   const presets = [
     "HUNTR", "JUANSSIN", "SHAKO", "CEROASTERISCO", "ENZOCEROBULTO", 
     "ONEY1", "SALAS FLACO", "JOSHU JOSHU", "ROJUU (salsa valentina)", 
@@ -158,25 +159,67 @@
   const modalOverlay = document.getElementById('modalOverlay');
   const modalTitle = document.getElementById('modalTitle');
   const modalText = document.getElementById('modalText');
+  const emailInput = document.getElementById('emailInput');
   const btnMpDirect = document.getElementById('btnMpDirect');
+  const modalError = document.getElementById('modalError');
   const btnCloseModal = document.getElementById('btnCloseModal');
 
-  function openIndividualModal(presetName) {
-    modalTitle.textContent = "Comprar: " + presetName;
-    modalText.innerHTML = `<strong>Preset:</strong> ${presetName} ($8.500).<br><br>Hacé clic en el botón para abonar con Mercado Pago.`;
-    btnMpDirect.href = LINK_1;
+  let pendingPresets = []; // los presets de la compra que está abierta en el modal ahora mismo
+
+  function openModal(names) {
+    pendingPresets = names;
+    emailInput.value = '';
+    modalError.style.display = 'none';
+    btnMpDirect.disabled = false;
+    btnMpDirect.textContent = 'Pagar en Mercado Pago';
+
+    if (names.length === 2) {
+      modalTitle.textContent = "Promo 2x1 — $15.000";
+      modalText.innerHTML = `<strong>Presets elegidos:</strong><br>- ${names[0]}<br>- ${names[1]}`;
+    } else {
+      modalTitle.textContent = "Comprar: " + names[0];
+      modalText.innerHTML = `<strong>Preset:</strong> ${names[0]} ($8.500)`;
+    }
     modalOverlay.classList.add('active');
   }
 
-  function openComboModal(names) {
-    modalTitle.textContent = "Promo 2x1 — $15.000";
-    modalText.innerHTML = `<strong>Presets elegidos:</strong><br>- ${names[0]}<br>- ${names[1]}<br><br>Hacé clic en el botón para abonar la promo en Mercado Pago.`;
-    btnMpDirect.href = LINK_2X1;
-    modalOverlay.classList.add('active');
-  }
+  function openIndividualModal(presetName) { openModal([presetName]); }
+  function openComboModal(names) { openModal(names); }
 
   btnCloseModal.addEventListener('click', () => modalOverlay.classList.remove('active'));
   modalOverlay.addEventListener('click', (e) => { if(e.target === modalOverlay) modalOverlay.classList.remove('active'); });
+
+  btnMpDirect.addEventListener('click', async () => {
+    const email = emailInput.value.trim();
+    modalError.style.display = 'none';
+
+    if (!email || !email.includes('@')) {
+      modalError.textContent = 'Poné un mail válido para poder mandarte el archivo.';
+      modalError.style.display = 'block';
+      return;
+    }
+
+    btnMpDirect.disabled = true;
+    btnMpDirect.textContent = 'Generando el pago...';
+
+    try {
+      const res = await fetch('/.netlify/functions/comprar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ presets: pendingPresets, email })
+      });
+
+      if (!res.ok) throw new Error('Falló la creación del pago');
+
+      const data = await res.json();
+      window.location.href = data.url; // te manda a la pantalla real de pago de Mercado Pago
+    } catch (err) {
+      modalError.textContent = 'Hubo un problema generando el pago. Probá de nuevo en unos segundos.';
+      modalError.style.display = 'block';
+      btnMpDirect.disabled = false;
+      btnMpDirect.textContent = 'Pagar en Mercado Pago';
+    }
+  });
 
   function refreshCombo(){
     comboCount.textContent = selected.length + "/2 elegidos";
