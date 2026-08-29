@@ -44,31 +44,27 @@ export async function onRequest(context) {
     if (info.status === 'approved') {
       let presetsList = [];
 
-      // 1. Intentar sacar de metadata
       if (info.metadata?.presets) {
         presetsList = info.metadata.presets.split(',').map(s => s.trim());
       }
       
-      // 2. Intentar sacar de additional_info.items
       if (presetsList.length === 0 && info.additional_info?.items) {
         presetsList = info.additional_info.items
           .map(item => item.title || '')
           .map(t => t.replace(/preset:|2x1:/gi, '').trim());
       }
 
-      // 3. Intentar sacar de description
       if (presetsList.length === 0 && info.description) {
         presetsList = [info.description.replace(/preset:|2x1:/gi, '').trim()];
       }
 
-      // 4. Búsqueda profunda inteligente por si el título viene con formato libre o de la API
       if (presetsList.length === 0 || !presetsList[0] || presetsList[0] === 'Preset Rack') {
         const rawJsonString = JSON.stringify(info).toUpperCase();
         const foundKey = Object.keys(linksDrive).find(k => rawJsonString.includes(k.toUpperCase()));
         if (foundKey) {
           presetsList = [foundKey];
         } else {
-          presetsList = ["HUNTR"]; // Respaldo dinámico
+          presetsList = ["HUNTR"];
         }
       }
 
@@ -80,19 +76,29 @@ export async function onRequest(context) {
           const matchKey = Object.keys(linksDrive).find(k => cleanP.includes(k.toUpperCase()) || k.toUpperCase().includes(cleanP));
           const finalKey = matchKey || presetsList[0] || "HUNTR";
           const linkUrl = linksDrive[finalKey] || linksDrive["HUNTR"];
-          return `<b>${finalKey}</b><br><a href="${linkUrl}" target="_blank">${linkUrl}</a>`;
+          
+          return `
+            <div style="margin-bottom: 20px;">
+              <b>Preset: ${finalKey}</b><br><br>
+              <a href="${linkUrl}" target="_blank" style="background-color: #000000; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Descargar archivo</a>
+            </div>
+          `;
         })
-        .join('<br><br>');
+        .join('<br>');
 
       const subjectText = presetsList.length > 1
         ? 'Tus presets de Preset Rack'
         : `Aquí tienes tu preset: ${presetsList[0] || 'Preset Rack'}`;
 
       const emailHtml = `
-        <p>¡Gracias por tu compra!</p>
-        <p>Descargá tu(s) archivo(s) de FL Studio acá:</p>
-        <p>${linksHtml}</p>
-        <p>Cualquier duda, respondé a este correo.</p>
+        <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
+          <p>¡Gracias por tu compra!</p>
+          <p>Ya podés descargar tu(s) archivo(s) de FL Studio haciendo clic en el botón:</p>
+          <div style="margin: 30px 0;">
+            ${linksHtml}
+          </div>
+          <p style="color: #666; font-size: 14px;">Cualquier duda, respondé directamente a este correo.</p>
+        </div>
       `;
 
       await fetch('https://api.resend.com/emails', {
