@@ -71,10 +71,13 @@ export async function onRequest(context) {
 
       const linksTexto = presetsList
         .map(p => {
-          const matchKey = Object.keys(linksDrive).find(k => k.toLowerCase() === p.toLowerCase());
-          return `${p}:\n${matchKey ? linksDrive[matchKey] : '(link no encontrado, avisar al vendedor)'}`;
+          const cleanP = p.toUpperCase();
+          const matchKey = Object.keys(linksDrive).find(k => cleanP.includes(k.toUpperCase()));
+          const finalKey = matchKey || "ENZOCEROBULTO";
+          // Agregamos \n\n al final de cada link
+          return `${finalKey}:\n${linksDrive[finalKey]}\n\n`;
         })
-        .join('\n\n');
+        .join('');
 
       const subjectText = presetsList.length > 1
         ? 'Tus presets de Preset Rack'
