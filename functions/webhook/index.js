@@ -1,6 +1,4 @@
 // Cloudflare Pages Function — responde en /webhook
-// Acepta tanto GET (para pruebas desde el navegador) como POST (para Mercado Pago)
-
 const linksDrive = {
   "HUNTR": "https://drive.google.com/drive/folders/1saQySurKB82uatNY2MLUrnamINmkPlQ9?usp=sharing",
   "JUANSSIN": "https://drive.google.com/drive/folders/1JnRze5StiMqh3uFBs9F7VkcHfWbzHszZ?usp=sharing",
@@ -41,44 +39,39 @@ export async function onRequest(context) {
     const payRes = await fetch(`https://api.mercadopago.com/v1/payments/${id}`, {
       headers: { 'Authorization': `Bearer ${env.MP_TOKEN}` }
     });
-    const info = wpSafeJson(await payRes.json());
+    const info = await payRes.json();
 
     if (info.status === 'approved') {
-      // 1. Intentamos sacar los presets de los metadata, o del título del ítem comprado como respaldo infalible
       let presetsList = [];
+
       if (info.metadata?.presets) {
-        presetsList = info.metadata.presets.split(',');
-      } else if (info.additional_info?.items) {
+        presetsList = info.metadata.presets.split(',').map(s => s.trim());
+      }
+      
+      if (presetsList.length === 0 && info.additional_info?.items) {
         presetsList = info.additional_info.items
-          .map(item => item.title.replace('Preset: ', '').replace('2x1: ', '').trim())
-          .flatMap(t => t.includes('+') ? t.split('+').map(s => s.trim()) : [t]);
+          .map(item => item.title || '')
+          .map(t => t.replace('Preset:', '').replace('2x1:', '').trim());
       }
 
-      // Si aún así no encontró nada, revisamos si el título general lo tiene
       if (presetsList.length === 0 && info.description) {
-        presetsList = [info.description.replace('Preset: ', '').trim()];
+        presetsList = [info.description.replace('Preset:', '').trim()];
       }
 
-      // 2. Sacar el email del comprador (metadata o del pagador de MP)
-      const email = info.metadata?.email || info.payer?.email || info.payer?.entity_type;
-
-      if (!email || presetsList.length === 0) {
-        // Fallback de emergencia si probamos a mano: mandámelo a tu mail personal para no perder la venta
-        console.log("Faltaba email o presets, usando respaldo de emergencia");
+      if (presetsList.length === 0 || !presetsList[0]) {
+        presetsList = ["ENZOCEROBULTO"];
       }
 
-      const destinoEmail = email && email.includes('@') ? email : 'nadiirriios@gmail.com';
+      const email = info.payer?.email || info.metadata?.email || 'nadiirriios@gmail.com';
 
       const linksTexto = presetsList
         .map(p => {
           const cleanP = p.toUpperCase();
           const matchKey = Object.keys(linksDrive).find(k => cleanP.includes(k.toUpperCase()));
           const finalKey = matchKey || "ENZOCEROBULTO";
-          return `${finalKey}: ${linksDrive[finalKey]}`;
+          return `${finalKey}:\n${linksDrive[finalKey]}`;
         })
         .join('\n');
-
-      const emailBody = `¡Gracias por tu compra!\n\nDescargá tu(s) archivo(s) de FL Studio acá:\n\n${linksTexto}\n\nCualquier duda, respondé a este correo.`;
 
       const subjectText = presetsList.length > 1
         ? 'Tus presets de Preset Rack'
@@ -94,7 +87,7 @@ export async function onRequest(context) {
         },
         body: JSON.stringify({
           from: 'Preset Rack <soporte@nadirfl.xyz>',
-          to: destinoEmail,
+          to: email,
           subject: subjectText,
           text: emailBody,
         }),
@@ -105,8 +98,4 @@ export async function onRequest(context) {
   } catch (err) {
     return new Response('Error interno: ' + err.message, { status: 500 });
   }
-}
-
-function wpSafeJson(json) {
-  return json;
 }
