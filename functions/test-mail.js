@@ -1,29 +1,31 @@
-import { WorkerMailer } from 'worker-mailer';
+import { WorkerMailer } from 'worker-mailer'; // O la importación que estés usando
 
 export async function onRequest(context) {
-  const { env, request } = context;
+  const { request, env } = context;
   const url = new URL(request.url);
   
-  // Clave de seguridad simple para que nadie más pueda usarlo
-  const secret = url.searchParams.get('key');
-  if (secret !== 'probar123') {
-    return new Response('No autorizado', { status: 403 });
+  // Tu clave de seguridad
+  if (url.searchParams.get('key') !== 'probar123') {
+    return new Response('No autorizado', { status: 401 });
   }
 
   try {
     const mailer = new WorkerMailer({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
       user: env.MAIL_USER,
       pass: env.MAIL_PASS,
     });
 
     await mailer.send({
-      to: env.MAIL_USER, // Te lo manda a tu propio correo
-      subject: 'Prueba de Preset-Rack - ¡Funciona!',
-      html: '<h1>¡El sistema de correos está activo!</h1><p>Acá tendrías los links de Google Drive para descargar tus presets.</p>',
+      to: env.MAIL_USER,
+      subject: 'Prueba desde Cloudflare',
+      text: '¡Funciona perfecto!',
     });
 
-    return new Response('¡Correo de prueba enviado con éxito! Fijate en tu bandeja de entrada.');
+    return new Response('¡Correo enviado con éxito!');
   } catch (error) {
-    return new Response('Error al enviar el correo: ' + error.message, { status: 500 });
+    return new Response(`Error al enviar el correo: ${error.message}`, { status: 500 });
   }
 }
