@@ -64,20 +64,26 @@ export async function onRequest(context) {
 
       const email = info.payer?.email || info.metadata?.email || 'nadiirriios@gmail.com';
 
-      const linksTexto = presetsList
+      const linksHtml = presetsList
         .map(p => {
           const cleanP = p.toUpperCase();
           const matchKey = Object.keys(linksDrive).find(k => cleanP.includes(k.toUpperCase()));
           const finalKey = matchKey || "ENZOCEROBULTO";
-          return `${finalKey}:\n${linksDrive[finalKey]}`;
+          const linkUrl = linksDrive[finalKey];
+          return `<b>${finalKey}</b><br><a href="${linkUrl}" target="_blank">${linkUrl}</a>`;
         })
-        .join('\n');
+        .join('<br><br>');
 
       const subjectText = presetsList.length > 1
         ? 'Tus presets de Preset Rack'
         : `Aquí tienes tu preset: ${presetsList[0] || 'Preset Rack'}`;
 
-      const emailBody = `¡Gracias por tu compra!\n\nDescargá tu(s) archivo(s) de FL Studio acá:\n\n${linksTexto}\n\nCualquier duda, respondé a este correo.`;
+      const emailHtml = `
+        <p>¡Gracias por tu compra!</p>
+        <p>Descargá tu(s) archivo(s) de FL Studio acá:</p>
+        <p>${linksHtml}</p>
+        <p>Cualquier duda, respondé a este correo.</p>
+      `;
 
       await fetch('https://api.resend.com/emails', {
         method: 'POST',
@@ -89,7 +95,7 @@ export async function onRequest(context) {
           from: 'Preset Rack <soporte@nadirfl.xyz>',
           to: email,
           subject: subjectText,
-          text: emailBody,
+          html: emailHtml,
         }),
       });
     }
