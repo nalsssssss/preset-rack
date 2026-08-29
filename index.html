@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRESET RACK</title>
+<link rel="icon" type="image/png" href="icono.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --bg:#ffffff; --ink:#0a0a0a; --line:#e4e4e4; --mute:#8a8a8a; --rec:#ff3b30; --panel:#f7f7f7; }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{ background:var(--bg); color:var(--ink); font-family:'Space Grotesk', sans-serif; -webkit-font-smoothing:antialiased; }
+  .mono{font-family:'JetBrains Mono', monospace;}
+  header{ padding:24px 6vw; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); position:sticky; top:0; background:rgba(255,255,255,.92); backdrop-filter:blur(6px); z-index:50; }
+  .logo{ font-weight:700; font-size:19px; letter-spacing:-0.02em; display:flex; align-items:center; gap:10px; }
+  .logo .dot{ width:9px; height:9px; border-radius:50%; background:var(--ink); }
+  nav a{ color:var(--ink); text-decoration:none; font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; opacity:.6; margin-left:22px; }
+  .hero{ padding:11vh 6vw 6vh; border-bottom:1px solid var(--line); }
+  .eyebrow{ font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--mute); display:flex; align-items:center; gap:8px; margin-bottom:20px; }
+  .eyebrow .blink{ width:7px; height:7px; border-radius:50%; background:var(--rec); animation:pulse 1.6s infinite; }
+  @keyframes pulse{0%,100%{opacity:1} 50%{opacity:.25}}
+  .hero h1{ font-size:clamp(34px, 5.6vw, 68px); font-weight:700; letter-spacing:-0.03em; line-height:1; max-width:16ch; }
+  .hero p{ margin-top:22px; max-width:50ch; color:var(--mute); font-size:15.5px; line-height:1.6; }
+  .combo{ margin:6vh 6vw 0; padding:26px 28px; background:var(--ink); color:var(--bg); border-radius:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px; }
+  .combo-txt b{ display:block; font-size:18px; margin-bottom:4px; }
+  .combo-txt span{ font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#bbbbbb; }
+  .rack{ padding:8vh 6vw 14vh; }
+  .rack-head{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:26px; border-bottom:1px solid var(--line); padding-bottom:14px; }
+  .rack-head h2{ font-size:15px; letter-spacing:.04em; }
+  .rack-head span{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--mute); }
+  .channel{ display:grid; grid-template-columns: 44px 1fr 90px 130px; align-items:center; gap:18px; padding:17px 14px; border-bottom:1px solid var(--line); transition:background .15s ease; cursor:pointer; }
+  .channel:hover{ background:var(--panel); }
+  .channel.selected{ background:var(--panel); box-shadow: inset 3px 0 0 var(--ink); }
+  .channel.selected .ch-num{ color:var(--ink); font-weight:700; }
+  .ch-num{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--mute); }
+  .ch-name{ font-size:15.5px; font-weight:500; letter-spacing:-0.01em; }
+  .ch-price{ font-family:'JetBrains Mono', monospace; font-weight:700; font-size:14.5px; }
+  .buy-btn{ font-family:'JetBrains Mono', monospace; font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; text-decoration:none; color:var(--bg); background:var(--ink); padding:10px 14px; border-radius:999px; text-align:center; white-space:nowrap; transition:opacity .15s ease; border:none; cursor:pointer; }
+  .buy-btn:hover{ opacity:.75; }
+  footer{ padding:6vh 6vw 6vh; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; }
+  footer p{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--mute); }
+  .combo-bar{ position:fixed; left:0; right:0; bottom:0; background:var(--ink); color:var(--bg); padding:16px 6vw; display:flex; justify-content:space-between; align-items:center; gap:14px; transform:translateY(120%); transition:transform .25s ease; z-index:60; flex-wrap:wrap; }
+  .combo-bar.show{ transform:translateY(0); }
+  .combo-bar b{ font-size:14px; display:block; }
+  .combo-bar span{ font-family:'JetBrains Mono', monospace; font-size:12px; color:#bbbbbb; }
+  .combo-bar button{ font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; border:none; cursor:pointer; color:var(--ink); background:var(--bg); padding:13px 22px; border-radius:999px; }
+  
+  /* ESTILOS DEL MODAL */
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .modal-overlay.active { opacity: 1; pointer-events: auto; }
+  .modal-box { background: var(--bg); color: var(--ink); padding: 32px; border-radius: 16px; max-width: 420px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+  .modal-box h3 { font-size: 20px; margin-bottom: 12px; line-height:1.2; }
+  .modal-box p { font-size: 14.5px; color: var(--mute); margin-bottom: 16px; line-height: 1.6; }
+  .modal-box strong { color: var(--ink); }
+  
+  .modal-action-btn { display: block; width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 10px; text-align: center; text-decoration: none; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; transition: transform 0.1s ease; border: none; cursor: pointer; }
+  .modal-action-btn:active { transform: scale(0.98); }
+  .btn-mp { background: #009EE3; color: white; }
+  .btn-close-modal { display: block; width: 100%; padding: 12px; background: transparent; border: none; color: var(--mute); cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 500; margin-top: 8px; text-decoration: underline; }
+  .btn-close-modal:hover { color: var(--ink); }
+  
+  @media (max-width:820px){
+    .channel{ grid-template-columns: 1fr; row-gap:10px; padding:20px 4px; }
+    .ch-num{ display:none; }
+    .buy-btn{ width:100%; padding:13px; }
+    .combo{ flex-direction:column; align-items:flex-start; }
+    .combo-bar{ flex-direction:column; align-items:flex-start; }
+    .combo-bar button{ width:100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span class="dot"></span> PRESET&nbsp;RACK</div>
+  <nav><a href="#rack">CATÁLOGO</a></nav>
+</header>
+
+<section class="hero">
+  <div class="eyebrow"><span class="blink"></span> presets vocales · fl studio</div>
+  <h1>Voces mezcladas antes de tocar un fader.</h1>
+  <p>Cadenas de plugins listas para cargar. Elegí tu preset, pagá de forma segura y recibí el contenido al instante.</p>
+</section>
+
+<div class="combo" id="comboBanner">
+  <div class="combo-txt">
+    <b>2x1 — llevate dos por $15.000</b>
+    <span class="mono" id="comboHint">Tocá dos presets de la lista de abajo para elegirlos</span>
+  </div>
+  <span class="mono" id="comboCount" style="opacity:.7;">0/2 elegidos</span>
+</div>
+
+<p class="mono" style="padding:14px 6vw 0; color:var(--mute); font-size:12px; letter-spacing:.02em;">
+  Máximo 2 presets por compra. ¿Querés más? Hacés otra compra aparte.
+</p>
+
+<section class="rack" id="rack">
+  <div class="rack-head">
+    <h2>Catálogo — $8.500 c/u</h2>
+    <span class="mono" id="count">26 presets</span>
+  </div>
+  <div id="list"></div>
+</section>
+
+<footer>
+  <p>© PRESET RACK</p>
+  <p>Envíos procesados 24/7</p>
+</footer>
+
+<div class="combo-bar" id="comboBar">
+  <div>
+    <b id="comboBarNames">—</b>
+    <span>Promo 2x1 seleccionada ($15.000)</span>
+  </div>
+  <button id="comboBarBtn">Confirmar 2x1 y Pagar</button>
+</div>
+
+<!-- VENTANITA EMERGENTE (MODAL) -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <h3 id="modalTitle">Estás por comprar</h3>
+    <p id="modalText">
+      <strong>Instrucciones:</strong><br>
+      Ingresá tu mail (ahí te llega el archivo apenas se acredite el pago) y tocá el botón para ir a pagar.
+    </p>
+
+    <input type="email" id="emailInput" placeholder="tu-mail@ejemplo.com" required
+      style="width:100%; padding:13px 14px; margin-bottom:14px; border:1px solid var(--line); border-radius:10px; font-family:'Space Grotesk',sans-serif; font-size:15px;">
+
+    <button class="modal-action-btn btn-mp" id="btnMpDirect">Pagar en Mercado Pago</button>
+    <p id="modalError" style="color:#c0392b; font-size:13px; margin:8px 0 0; display:none;"></p>
+
+    <button class="btn-close-modal" id="btnCloseModal">Cancelar</button>
+  </div>
+</div>
+
+<script>
+  const presets = [
+    "HUNTR", "JUANSSIN", "SHAKO", "CEROASTERISCO", "ENZOCEROBULTO", 
+    "ONEY1", "SALAS FLACO", "JOSHU JOSHU", "ROJUU (salsa valentina)", 
+    "OSAMASON/NETTSPEND", "SARAMALACARA x CAPOXXO", "ZELL 2.0", 
+    "STARBOY/GUNNR", "NEW JAZZ (underaiki)", "TURROBABY", "C.R.O", 
+    "LIL PEEP (your favorite dress)", "ROJUU (melasuda)", 
+    "DETROIT (mechayrxmeo)", "SWAGGERBOYZ", "ZELL", "LOLO MORALES", 
+    "GLOOSITO (DETROIT)", "SARAMALACARA", "HYPERPOP (CAPOXXO)", "PLUGGNB"
+  ];
+
+  const list = document.getElementById('list');
+  let selected = [];
+
+  const comboCount = document.getElementById('comboCount');
+  const comboBar = document.getElementById('comboBar');
+  const comboBarNames = document.getElementById('comboBarNames');
+  const comboBarBtn = document.getElementById('comboBarBtn');
+  
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalText = document.getElementById('modalText');
+  const emailInput = document.getElementById('emailInput');
+  const btnMpDirect = document.getElementById('btnMpDirect');
+  const modalError = document.getElementById('modalError');
+  const btnCloseModal = document.getElementById('btnCloseModal');
+
+  let pendingPresets = []; // los presets de la compra que está abierta en el modal ahora mismo
+
+  function openModal(names) {
+    pendingPresets = names;
+    emailInput.value = '';
+    modalError.style.display = 'none';
+    btnMpDirect.disabled = false;
+    btnMpDirect.textContent = 'Pagar en Mercado Pago';
+
+    if (names.length === 2) {
+      modalTitle.textContent = "Promo 2x1 — $15.000";
+      modalText.innerHTML = `<strong>Presets elegidos:</strong><br>- ${names[0]}<br>- ${names[1]}`;
+    } else {
+      modalTitle.textContent = "Comprar: " + names[0];
+      modalText.innerHTML = `<strong>Preset:</strong> ${names[0]} ($8.500)`;
+    }
+    modalOverlay.classList.add('active');
+  }
+
+  function openIndividualModal(presetName) { openModal([presetName]); }
+  function openComboModal(names) { openModal(names); }
+
+  btnCloseModal.addEventListener('click', () => modalOverlay.classList.remove('active'));
+  modalOverlay.addEventListener('click', (e) => { if(e.target === modalOverlay) modalOverlay.classList.remove('active'); });
+
+  btnMpDirect.addEventListener('click', async () => {
+    const email = emailInput.value.trim();
+    modalError.style.display = 'none';
+
+    if (!email || !email.includes('@')) {
+      modalError.textContent = 'Poné un mail válido para poder mandarte el archivo.';
+      modalError.style.display = 'block';
+      return;
+    }
+
+    btnMpDirect.disabled = true;
+    btnMpDirect.textContent = 'Generando el pago...';
+
+    try {
+      const res = await fetch('/comprar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ presets: pendingPresets, email })
+      });
+
+      if (!res.ok) throw new Error('Falló la creación del pago');
+
+      const data = await res.json();
+      window.location.href = data.url; // te manda a la pantalla real de pago de Mercado Pago
+    } catch (err) {
+      modalError.textContent = 'Hubo un problema generando el pago. Probá de nuevo en unos segundos.';
+      modalError.style.display = 'block';
+      btnMpDirect.disabled = false;
+      btnMpDirect.textContent = 'Pagar en Mercado Pago';
+    }
+  });
+
+  function refreshCombo(){
+    comboCount.textContent = selected.length + "/2 elegidos";
+    if(selected.length === 2){
+      const names = selected.map(i => presets[i]);
+      comboBarNames.textContent = names.join("  +  ");
+      comboBar.classList.add('show');
+    } else {
+      comboBar.classList.remove('show');
+    }
+  }
+
+  presets.forEach((name, i) => {
+    const row = document.createElement('div');
+    row.className = 'channel';
+    row.innerHTML = `<div class="ch-num mono">${String(i+1).padStart(2,'0')}</div><div class="ch-name">${name}</div><div class="ch-price mono">$8.500</div><button class="buy-btn">Comprar</button>`;
+
+    const buyBtn = row.querySelector('.buy-btn');
+    buyBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); 
+      openIndividualModal(name);
+    });
+
+    row.addEventListener('click', () => {
+      const idx = selected.indexOf(i);
+      if(idx !== -1){
+        selected.splice(idx, 1);
+        row.classList.remove('selected');
+      } else {
+        if(selected.length === 2){
+          const removedIndex = selected.shift();
+          document.querySelectorAll('.channel')[removedIndex].classList.remove('selected');
+        }
+        selected.push(i);
+        row.classList.add('selected');
+      }
+      refreshCombo();
+    });
+    list.appendChild(row);
+  });
+
+  comboBarBtn.addEventListener('click', () => {
+    const names = selected.map(i => presets[i]);
+    openComboModal(names);
+  });
+</script>
+</body>
+</html>

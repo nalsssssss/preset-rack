@@ -1,0 +1,7 @@
+{
+  "name": "preset-rack",
+  "version": "1.0.0",
+  "dependencies": {
+    "worker-mailer": "^1.0.0"
+  }
+}
