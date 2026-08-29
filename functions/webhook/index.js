@@ -30,8 +30,41 @@ const linksDrive = {
 
 export async function onRequest(context) {
   const { request, env } = context;
-
   const url = new URL(request.url);
+
+  // MODO PRUEBA MANUAL SIN GASTAR PLATA
+  if (url.searchParams.get('test') === '1') {
+    const presetPrueba = url.searchParams.get('preset') || 'HUNTR';
+    const linkUrl = linksDrive[presetPrueba] || linksDrive['HUNTR'];
+    
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: 'Preset Rack <soporte@nadirfl.xyz>',
+        to: 'nadiirriios@gmail.com', // Te llega directo a tu mail
+        subject: `Aquí tienes tu preset: ${presetPrueba}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
+            <p>¡Prueba exitosa!</p>
+            <p>Ya podés descargar tu(s) archivo(s) de FL Studio haciendo clic en el botón:</p>
+            <div style="margin: 30px 0;">
+              <div style="margin-bottom: 20px;">
+                <b>Preset: ${presetPrueba}</b><br><br>
+                <a href="${linkUrl}" target="_blank" style="background-color: #000000; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Descargar archivo</a>
+              </div>
+            </div>
+            <p style="color: #666; font-size: 14px;">Cualquier duda, respondé directamente a este correo.</p>
+          </div>
+        `,
+      }),
+    });
+    return new Response('¡Correo de prueba enviado con éxito!', { status: 200 });
+  }
+
   const id = url.searchParams.get('data.id') || url.searchParams.get('id');
   if (!id) return new Response('Falta ID', { status: 200 });
 
