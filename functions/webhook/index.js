@@ -41,25 +41,45 @@ export async function onRequest(context) {
     const payRes = await fetch(`https://api.mercadopago.com/v1/payments/${id}`, {
       headers: { 'Authorization': `Bearer ${env.MP_TOKEN}` }
     });
-    const info = await payRes.json();
+    const info = wpSafeJson(await payRes.json());
 
     if (info.status === 'approved') {
-      const presetsList = info.metadata?.presets ? info.metadata.presets.split(',') : [];
-      const email = info.metadata?.email;
-
-      if (!email) {
-        return new Response('Pago aprobado pero falta email en metadata', { status: 200 });
+      // 1. Intentamos sacar los presets de los metadata, o del título del ítem comprado como respaldo infalible
+      let presetsList = [];
+      if (info.metadata?.presets) {
+        presetsList = info.metadata.presets.split(',');
+      } else if (info.additional_info?.items) {
+        presetsList = info.additional_info.items
+          .map(item => item.title.replace('Preset: ', '').replace('2x1: ', '').trim())
+          .flatMap(t => t.includes('+') ? t.split('+').map(s => s.trim()) : [t]);
       }
 
+      // Si aún así no encontró nada, revisamos si el título general lo tiene
+      if (presetsList.length === 0 && info.description) {
+        presetsList = [info.description.replace('Preset: ', '').trim()];
+      }
+
+      // 2. Sacar el email del comprador (metadata o del pagador de MP)
+      const email = info.metadata?.email || info.payer?.email || info.payer?.entity_type;
+
+      if (!email || presetsList.length === 0) {
+        // Fallback de emergencia si probamos a mano: mandámelo a tu mail personal para no perder la venta
+        console.log("Faltaba email o presets, usando respaldo de emergencia");
+      }
+
+      const destinoEmail = email && email.includes('@') ? email : 'nadiirriios@gmail.com';
+
       const linksTexto = presetsList
-        .map(p => `${p.trim()}:\n${linksDrive[p.trim()] || '(link no encontrado, avisar al vendedor)'}`)
+        .map(p => {
+          const matchKey = Object.keys(linksDrive).find(k => k.toLowerCase() === p.toLowerCase());
+          return `${p}:\n${matchKey ? linksDrive[matchKey] : '(link no encontrado, avisar al vendedor)'}`;
+        })
         .join('\n\n');
 
       const subjectText = presetsList.length > 1
         ? 'Tus presets de Preset Rack'
         : `Aquí tienes tu preset: ${presetsList[0] || 'Preset Rack'}`;
 
-      // ACÁ ESTABAN FALTANDO LOS SALTOS DE LÍNEA CLAROS
       const emailBody = `¡Gracias por tu compra!\n\nDescargá tu(s) archivo(s) de FL Studio acá:\n\n${linksTexto}\n\nCualquier duda, respondé a este correo.`;
 
       await fetch('https://api.resend.com/emails', {
@@ -70,7 +90,7 @@ export async function onRequest(context) {
         },
         body: JSON.stringify({
           from: 'Preset Rack <soporte@nadirfl.xyz>',
-          to: email,
+          to: destinoEmail,
           subject: subjectText,
           text: emailBody,
         }),
@@ -81,4 +101,8 @@ export async function onRequest(context) {
   } catch (err) {
     return new Response('Error interno: ' + err.message, { status: 500 });
   }
+}
+
+function wpSafeJson(json) {
+  return json;
 }
