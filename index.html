@@ -55,8 +55,6 @@
   .modal-box h3 { font-size: 20px; margin-bottom: 12px; line-height:1.2; }
   .modal-box p { font-size: 14.5px; color: var(--mute); margin-bottom: 16px; line-height: 1.6; }
   .modal-box strong { color: var(--ink); }
-  .input-email { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid var(--line); border-radius: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 14px; outline: none; }
-  .input-email:focus { border-color: var(--ink); }
   
   .modal-action-btn { display: block; width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 10px; text-align: center; text-decoration: none; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; transition: transform 0.1s ease; border: none; cursor: pointer; }
   .modal-action-btn:active { transform: scale(0.98); }
@@ -85,7 +83,7 @@
 <section class="hero">
   <div class="eyebrow"><span class="blink"></span> presets vocales · fl studio</div>
   <h1>Voces mezcladas antes de tocar un fader.</h1>
-  <p>Cadenas de plugins listas para cargar. Elegí tu preset, pagá con Mercado Pago y te llega automáticamente por mail.</p>
+  <p>Cadenas de plugins listas para cargar. Elegí tu preset, pagá con Mercado Pago y avisame por Instagram para coordinar la entrega.</p>
 </section>
 
 <div class="combo" id="comboBanner">
@@ -116,31 +114,31 @@
 <div class="combo-bar" id="comboBar">
   <div>
     <b id="comboBarNames">—</b>
-    <span>Avisame por Instagram para el 2x1</span>
+    <span>Promo 2x1 seleccionada ($15.000)</span>
   </div>
-  <button id="comboBarBtn">Confirmar 2x1 y pagar $15.000</button>
+  <button id="comboBarBtn">Confirmar 2x1 y Pagar</button>
 </div>
 
 <!-- VENTANITA EMERGENTE (MODAL) -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal-box">
-    <h3 id="modalTitle">Estás por comprar: Nombre</h3>
+    <h3 id="modalTitle">Estás por comprar</h3>
     <p id="modalText">
-      <strong>Data importante:</strong><br>
-      Dejá tu correo acá abajo. Cuando se apruebe el pago en Mercado Pago, el link de descarga te va a llegar automáticamente ahí.
+      <strong>Instrucciones:</strong><br>
+      1. Tocá el botón azul para pagar en Mercado Pago.<br>
+      2. Hablame a Instagram con el comprobante para pasarte los archivos.
     </p>
     
-    <input type="email" id="userEmail" class="input-email" placeholder="tu@correo.com">
-    
-    <button class="modal-action-btn btn-mp" id="btnMpAuto">Ir a Mercado Pago</button>
-    <a href="https://www.instagram.com/nadir.1880/" class="modal-action-btn btn-ig" id="btnIgManual" target="_blank" style="display:none;">2. Avisar por Instagram</a>
+    <a href="#" class="modal-action-btn btn-mp" id="btnMpDirect" target="_blank">Pagar en Mercado Pago</a>
+    <a href="https://www.instagram.com/nadir.1880/" class="modal-action-btn btn-ig" target="_blank">Avisar por Instagram (@nadir.1880)</a>
     
     <button class="btn-close-modal" id="btnCloseModal">Cancelar</button>
   </div>
 </div>
 
 <script>
-  const LINK_2X1 = "https://mpago.la/28iDmjm";
+  const LINK_1 = "https://mpago.la/2FYxmUg";  // Link de 1 preset ($8.500)
+  const LINK_2X1 = "https://mpago.la/28iDmjm"; // Link de la promo 2x1 ($15.000)
 
   const presets = [
     "HUNTR", "JUANSSIN", "SHAKO", "CEROASTERISCO", "ENZOCEROBULTO", 
@@ -154,7 +152,6 @@
 
   const list = document.getElementById('list');
   let selected = [];
-  let currentPresetToBuy = "";
 
   const comboCount = document.getElementById('comboCount');
   const comboBar = document.getElementById('comboBar');
@@ -165,71 +162,22 @@
   const modalOverlay = document.getElementById('modalOverlay');
   const modalTitle = document.getElementById('modalTitle');
   const modalText = document.getElementById('modalText');
-  const userEmail = document.getElementById('userEmail');
-  const btnMpAuto = document.getElementById('btnMpAuto');
-  const btnIgManual = document.getElementById('btnIgManual');
+  const btnMpDirect = document.getElementById('btnMpDirect');
   const btnCloseModal = document.getElementById('btnCloseModal');
 
-  // Función para abrir modal automático (Individual)
-  function openAutoModal(presetName) {
-    currentPresetToBuy = presetName;
+  // Modal para compra individual ($8.500)
+  function openIndividualModal(presetName) {
     modalTitle.textContent = "Comprar: " + presetName;
-    modalText.innerHTML = "<strong>Data importante:</strong><br>Dejá tu correo acá abajo. Cuando pagues, el link de descarga te va a llegar ahí automáticamente.";
-    userEmail.style.display = "block";
-    userEmail.value = "";
-    btnMpAuto.textContent = "Ir a Mercado Pago";
-    btnMpAuto.style.display = "block";
-    
-    // Ocultar botones de link estático
-    btnIgManual.style.display = "none";
-    
-    // Remover eventos anteriores del botón de Mercado Pago
-    const newBtn = btnMpAuto.cloneNode(true);
-    btnMpAuto.parentNode.replaceChild(newBtn, btnMpAuto);
-    
-    newBtn.addEventListener('click', async () => {
-      if (!userEmail.value.includes("@")) {
-        alert("Por favor, poné un correo válido.");
-        return;
-      }
-      newBtn.textContent = "Generando pago...";
-      newBtn.disabled = true;
-      
-      try {
-        const req = await fetch('/.netlify/functions/comprar', {
-          method: 'POST',
-          body: JSON.stringify({ preset: currentPresetToBuy, email: userEmail.value })
-        });
-        const res = await req.json();
-        if(res.url) {
-          window.location.href = res.url; // Redirige a MP
-        } else {
-          alert("Error generando el link. Probá de nuevo.");
-          newBtn.textContent = "Ir a Mercado Pago";
-          newBtn.disabled = false;
-        }
-      } catch (e) {
-        alert("Falla de conexión al servidor.");
-        newBtn.textContent = "Ir a Mercado Pago";
-        newBtn.disabled = false;
-      }
-    });
-
+    modalText.innerHTML = `<strong>Preset seleccionado:</strong> ${presetName} ($8.500).<br><br>1. Pagá tocando el botón azul.<br>2. Mandame captura al Instagram para pasarte el link de descarga.`;
+    btnMpDirect.href = LINK_1;
     modalOverlay.classList.add('active');
   }
 
-  // Función para abrir modal manual (2x1)
-  function openManualModal(names) {
-    modalTitle.textContent = "Promo 2x1";
-    modalText.innerHTML = `<strong>Data importante:</strong><br><br>Elegiste:<br>- ${names[0]}<br>- ${names[1]}<br><br>Paso 1: Pagá tocando el botón azul.<br>Paso 2: Avisame por Instagram con la captura para pasarte los links.`;
-    userEmail.style.display = "none";
-    
-    const newBtn = document.getElementById('btnMpAuto').cloneNode(true);
-    document.getElementById('btnMpAuto').parentNode.replaceChild(newBtn, document.getElementById('btnMpAuto'));
-    newBtn.textContent = "1. Pagar en Mercado Pago";
-    newBtn.addEventListener('click', () => { window.open(LINK_2X1, '_blank'); });
-
-    btnIgManual.style.display = "block";
+  // Modal para promo 2x1 ($15.000)
+  function openComboModal(names) {
+    modalTitle.textContent = "Promo 2x1 — $15.000";
+    modalText.innerHTML = `<strong>Presets elegidos:</strong><br>- ${names[0]}<br>- ${names[1]}<br><br>1. Pagá los dos por $15.000 tocando el botón azul.<br>2. Mandame captura al Instagram con tus elegidos para recibir los archivos.`;
+    btnMpDirect.href = LINK_2X1;
     modalOverlay.classList.add('active');
   }
 
@@ -255,7 +203,7 @@
     const buyBtn = row.querySelector('.buy-btn');
     buyBtn.addEventListener('click', (e) => {
       e.stopPropagation(); 
-      openAutoModal(name);
+      openIndividualModal(name);
     });
 
     row.addEventListener('click', () => {
@@ -278,7 +226,7 @@
 
   comboBarBtn.addEventListener('click', () => {
     const names = selected.map(i => presets[i]);
-    openManualModal(names);
+    openComboModal(names);
   });
 </script>
 </body>
