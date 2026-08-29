@@ -14,8 +14,8 @@ exports.handler = async (event) => {
         payer: { email: data.email },
         metadata: { preset: data.preset, email: data.email },
         back_urls: { 
-          success: "https://nadirfl.xyz", 
-          failure: "https://nadirfl.xyz" 
+          success: "https://nadirfl.xyz/", 
+          failure: "https://nadirfl.xyz/" 
         },
         auto_return: "approved",
         notification_url: "https://nadirfl.xyz/.netlify/functions/webhook"
@@ -23,7 +23,6 @@ exports.handler = async (event) => {
     });
     return { statusCode: 200, body: JSON.stringify({ url: response.init_point }) };
   } catch (error) {
-    console.error("ERROR MERCADO PAGO:", error);
     return { statusCode: 500, body: 'Error creando pago' };
   }
 };
