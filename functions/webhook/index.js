@@ -74,10 +74,11 @@ export async function onRequest(context) {
           const cleanP = p.toUpperCase();
           const matchKey = Object.keys(linksDrive).find(k => cleanP.includes(k.toUpperCase()));
           const finalKey = matchKey || "ENZOCEROBULTO";
-          // Agregamos \n\n al final de cada link
-          return `${finalKey}:\n${linksDrive[finalKey]}\n\n`;
+          return `${finalKey}: ${linksDrive[finalKey]}`;
         })
-        .join('');
+        .join('\n');
+
+      const emailBody = `¡Gracias por tu compra!\n\nDescargá tu(s) archivo(s) de FL Studio acá:\n\n${linksTexto}\n\nCualquier duda, respondé a este correo.`;
 
       const subjectText = presetsList.length > 1
         ? 'Tus presets de Preset Rack'
