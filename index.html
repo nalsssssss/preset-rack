@@ -59,7 +59,6 @@
   .modal-action-btn { display: block; width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 10px; text-align: center; text-decoration: none; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; transition: transform 0.1s ease; border: none; cursor: pointer; }
   .modal-action-btn:active { transform: scale(0.98); }
   .btn-mp { background: #009EE3; color: white; }
-  .btn-ig { background: #E1306C; color: white; }
   .btn-close-modal { display: block; width: 100%; padding: 12px; background: transparent; border: none; color: var(--mute); cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 500; margin-top: 8px; text-decoration: underline; }
   .btn-close-modal:hover { color: var(--ink); }
   
@@ -83,7 +82,7 @@
 <section class="hero">
   <div class="eyebrow"><span class="blink"></span> presets vocales · fl studio</div>
   <h1>Voces mezcladas antes de tocar un fader.</h1>
-  <p>Cadenas de plugins listas para cargar. Elegí tu preset, pagá con Mercado Pago y avisame por Instagram para coordinar la entrega.</p>
+  <p>Cadenas de plugins listas para cargar. Elegí tu preset, pagá de forma segura y recibí el contenido al instante.</p>
 </section>
 
 <div class="combo" id="comboBanner">
@@ -125,20 +124,18 @@
     <h3 id="modalTitle">Estás por comprar</h3>
     <p id="modalText">
       <strong>Instrucciones:</strong><br>
-      1. Tocá el botón azul para pagar en Mercado Pago.<br>
-      2. Hablame a Instagram con el comprobante para pasarte los archivos.
+      Tocá el botón de abajo para completar el pago de forma segura en Mercado Pago.
     </p>
     
     <a href="#" class="modal-action-btn btn-mp" id="btnMpDirect" target="_blank">Pagar en Mercado Pago</a>
-    <a href="https://www.instagram.com/nadir.1880/" class="modal-action-btn btn-ig" target="_blank">Avisar por Instagram (@nadir.1880)</a>
     
     <button class="btn-close-modal" id="btnCloseModal">Cancelar</button>
   </div>
 </div>
 
 <script>
-  const LINK_1 = "https://mpago.la/2FYxmUg";  // Link de 1 preset ($8.500)
-  const LINK_2X1 = "https://mpago.la/28iDmjm"; // Link de la promo 2x1 ($15.000)
+  const LINK_1 = "https://mpago.la/2FYxmUg";  
+  const LINK_2X1 = "https://mpago.la/28iDmjm"; 
 
   const presets = [
     "HUNTR", "JUANSSIN", "SHAKO", "CEROASTERISCO", "ENZOCEROBULTO", 
@@ -158,25 +155,22 @@
   const comboBarNames = document.getElementById('comboBarNames');
   const comboBarBtn = document.getElementById('comboBarBtn');
   
-  // Elementos del Modal
   const modalOverlay = document.getElementById('modalOverlay');
   const modalTitle = document.getElementById('modalTitle');
   const modalText = document.getElementById('modalText');
   const btnMpDirect = document.getElementById('btnMpDirect');
   const btnCloseModal = document.getElementById('btnCloseModal');
 
-  // Modal para compra individual ($8.500)
   function openIndividualModal(presetName) {
     modalTitle.textContent = "Comprar: " + presetName;
-    modalText.innerHTML = `<strong>Preset seleccionado:</strong> ${presetName} ($8.500).<br><br>1. Pagá tocando el botón azul.<br>2. Mandame captura al Instagram para pasarte el link de descarga.`;
+    modalText.innerHTML = `<strong>Preset:</strong> ${presetName} ($8.500).<br><br>Hacé clic en el botón para abonar con Mercado Pago.`;
     btnMpDirect.href = LINK_1;
     modalOverlay.classList.add('active');
   }
 
-  // Modal para promo 2x1 ($15.000)
   function openComboModal(names) {
     modalTitle.textContent = "Promo 2x1 — $15.000";
-    modalText.innerHTML = `<strong>Presets elegidos:</strong><br>- ${names[0]}<br>- ${names[1]}<br><br>1. Pagá los dos por $15.000 tocando el botón azul.<br>2. Mandame captura al Instagram con tus elegidos para recibir los archivos.`;
+    modalText.innerHTML = `<strong>Presets elegidos:</strong><br>- ${names[0]}<br>- ${names[1]}<br><br>Hacé clic en el botón para abonar la promo en Mercado Pago.`;
     btnMpDirect.href = LINK_2X1;
     modalOverlay.classList.add('active');
   }
