@@ -1,8 +1,5 @@
 // Cloudflare Pages Function — responde en /webhook
-// Usa worker-mailer (en vez de nodemailer) porque Cloudflare Workers no soporta
-// SMTP a través de nodemailer directamente.
-
-import { WorkerMailer } from 'worker-mailer';
+// Usa la API HTTP de Resend para evitar bloqueos de SMTP en Cloudflare Workers.
 
 const linksDrive = {
   "HUNTR": "https://drive.google.com/drive/folders/1saQySurKB82uatNY2MLUrnamINmkPlQ9?usp=sharing",
@@ -37,7 +34,7 @@ export async function onRequestPost(context) {
   const { request, env } = context;
 
   const url = new URL(request.url);
-  const id = url.searchParams.get('data.id');
+  const id = url.searchParams.get('data.id') || url.searchParams.get('id');
   if (!id) return new Response('Falta ID', { status: 200 });
 
   try {
@@ -47,29 +44,36 @@ export async function onRequestPost(context) {
     const info = await payRes.json();
 
     if (info.status === 'approved') {
-      const presetsList = info.metadata.presets.split(',');
-      const email = info.metadata.email;
+      const presetsList = info.metadata?.presets ? info.metadata.presets.split(',') : [];
+      const email = info.metadata?.email;
+
+      if (!email) {
+        return new Response('Pago aprobado pero falta email en metadata', { status: 200 });
+      }
 
       const linksTexto = presetsList
-        .map(p => `${p}:\n${linksDrive[p] || '(link no encontrado, avisar al vendedor)'}`)
+        .map(p => `${p.trim()}:\n${linksDrive[p.trim()] || '(link no encontrado, avisar al vendedor)'}`)
         .join('\n\n');
 
-      const mailer = await WorkerMailer.connect({
-        credentials: { username: env.MAIL_USER, password: env.MAIL_PASS },
-        authType: 'plain',
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false,
-        startTls: true
-      });
+      const subjectText = presetsList.length > 1
+        ? 'Tus presets de Preset Rack'
+        : `Aquí tienes tu preset: ${presetsList[0] || 'Preset Rack'}`;
 
-      await mailer.send({
-        from: { name: 'Preset Rack', email: env.MAIL_USER },
-        to: { email },
-        subject: presetsList.length > 1
-          ? 'Tus 2 presets de Preset Rack'
-          : `Aquí tienes tu preset: ${presetsList[0]}`,
-        text: `¡Gracias por tu compra!\n\nDescargá tu(s) archivo(s) de FL Studio acá:\n\n${linksTexto}\n\nCualquier duda, respondé a este correo.`
+      const emailBody = `¡Gracias por tu compra!\n\nDescargá tu(s) archivo(s) de FL Studio acá:\n\n${linksTexto}\n\nCualquier duda, respondé a este correo.`;
+
+      // Envío mediante la API HTTP de Resend
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+        },
+        body: JSON.stringify({
+          from: 'onboarding@resend.dev',
+          to: email,
+          subject: subjectText,
+          text: emailBody,
+        }),
       });
     }
 
