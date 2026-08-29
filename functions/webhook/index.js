@@ -45,7 +45,7 @@ export async function onRequest(context) {
       },
       body: JSON.stringify({
         from: 'Preset Rack <soporte@nadirfl.xyz>',
-        to: 'nadiirriios@gmail.com', // Te llega directo a tu mail
+        to: 'nadiirriios@gmail.com',
         subject: `Aquí tienes tu preset: ${presetPrueba}`,
         html: `
           <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
@@ -56,6 +56,9 @@ export async function onRequest(context) {
                 <b>Preset: ${presetPrueba}</b><br><br>
                 <a href="${linkUrl}" target="_blank" style="background-color: #000000; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Descargar archivo</a>
               </div>
+            </div>
+            <div style="background-color: #f8f9fa; border-left: 4px solid #ffc107; padding: 12px; margin: 20px 0; font-size: 13px; color: #555;">
+              <b>¿No encontrás el correo?</b> Si este mensaje te llegó a la carpeta de <b>Spam o Correo no deseado</b>, marcalo como "No es spam" para recibir futuras actualizaciones sin problemas.
             </div>
             <p style="color: #666; font-size: 14px;">Cualquier duda, respondé directamente a este correo.</p>
           </div>
@@ -129,6 +132,9 @@ export async function onRequest(context) {
           <p>Ya podés descargar tu(s) archivo(s) de FL Studio haciendo clic en el botón:</p>
           <div style="margin: 30px 0;">
             ${linksHtml}
+          </div>
+          <div style="background-color: #f8f9fa; border-left: 4px solid #ffc107; padding: 12px; margin: 20px 0; font-size: 13px; color: #555;">
+            <b>¿No encontrás el correo?</b> Si este mensaje te llegó a la carpeta de <b>Spam o Correo no deseado</b>, marcalo como "No es spam" para recibir futuras actualizaciones sin problemas.
           </div>
           <p style="color: #666; font-size: 14px;">Cualquier duda, respondé directamente a este correo.</p>
         </div>
