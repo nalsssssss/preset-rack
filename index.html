@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>nadir</title>
+<title>Nadir — Preset Rack</title>
 <link rel="icon" type="image/png" href="icono.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -177,6 +177,7 @@
 
 <footer>
   <p>© PRESET RACK</p>
+  <p>Visitas totales: <span id="visitCount" class="mono" style="color: #fff;">Cargando...</span></p>
   <p>Envíos procesados 24/7</p>
 </footer>
 
@@ -216,6 +217,16 @@
 </div>
 
 <script>
+  // SCRIPT PARA CARGAR EL CONTADOR DE VISITAS AUTOMÁTICO
+  fetch('https://api.counterapi.dev/v1/nadir-preset-rack/visits/up')
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('visitCount').textContent = data.count;
+    })
+    .catch(() => {
+      document.getElementById('visitCount').textContent = '—';
+    });
+
   const presets = [
     "HUNTR", "JUANSSIN", "SHAKO", "CEROASTERISCO", "ENZOCEROBULTO", 
     "ONEY1", "SALAS FLACO", "JOSHU JOSHU", "ROJUU (salsa valentina)", 
