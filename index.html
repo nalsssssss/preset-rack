@@ -47,17 +47,17 @@
   .social-icon:hover { opacity: 1; transform: translateY(-2px); }
   .social-icon svg { width: 20px; height: 20px; fill: #fff; }
 
-  .hero{ padding:11vh 6vw 6vh; border-bottom:1px solid rgba(255,255,255,0.15); background:rgba(10,10,10,0.4); backdrop-filter:blur(6px); }
+  .hero{ padding:8vh 6vw 6vh; border-bottom:1px solid rgba(255,255,255,0.15); background:rgba(10,10,10,0.4); backdrop-filter:blur(6px); }
   
-  /* DISTRIBUCIÓN DE DOS COLUMNAS PARA EL HERO */
+  /* DISTRIBUCIÓN DE DOS COLUMNAS CON DESPLAZAMIENTO DEL VIDEO A LA IZQUIERDA Y ARRIBA */
   .hero-content {
     display: grid;
     grid-template-columns: 1.1fr 0.9fr;
-    align-items: center;
-    gap: 40px;
+    align-items: flex-start;
+    gap: 20px;
   }
 
-  /* CAJA CON BORDE PARA EL VIDEO EN LA ZONA DERECHA */
+  /* CAJA CON BORDE PARA EL VIDEO */
   .hero-video-box {
     width: 100%;
     border-radius: 14px;
@@ -66,13 +66,13 @@
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
     background: rgba(15, 15, 15, 0.8);
     backdrop-filter: blur(8px);
+    transform: translateX(-15px) translateY(-10px);
   }
 
   .video-container {
     position: relative;
     width: 100%;
-    padding-bottom: 56.25%; /* Proporción 16:9 */
-    height: 0;
+    aspect-ratio: 16 / 9;
   }
   .video-container iframe {
     position: absolute;
@@ -169,6 +169,7 @@
   
   @media (max-width:900px){
     .hero-content { grid-template-columns: 1fr; }
+    .hero-video-box { transform: none; }
     .channel{ grid-template-columns: 1fr; row-gap:10px; padding:20px 14px; }
     .ch-num{ display:none; }
     .buy-btn{ width:100%; padding:13px; }
@@ -207,7 +208,7 @@
       </div>
     </div>
 
-    <!-- COLUMNA DERECHA: VIDEO DE YOUTUBE ENMARCADO -->
+    <!-- COLUMNA DERECHA: VIDEO DE YOUTUBE ENMARCADO Y DESPLAZADO -->
     <div class="hero-video-box">
       <div class="video-container">
         <iframe src="https://www.youtube.com/embed/M7Ebp3qrChc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
