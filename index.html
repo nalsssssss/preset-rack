@@ -49,7 +49,7 @@
 
   .hero{ padding:8vh 6vw 6vh; border-bottom:1px solid rgba(255,255,255,0.15); background:rgba(10,10,10,0.4); backdrop-filter:blur(6px); }
   
-  /* DISTRIBUCIÓN DE DOS COLUMNAS CON DESPLAZAMIENTO DEL VIDEO A LA IZQUIERDA Y ARRIBA */
+  /* DISTRIBUCIÓN DE DOS COLUMNAS */
   .hero-content {
     display: grid;
     grid-template-columns: 1.1fr 0.9fr;
@@ -57,7 +57,7 @@
     gap: 20px;
   }
 
-  /* CAJA CON BORDE PARA EL VIDEO */
+  /* CAJA CON BORDE PARA EL VIDEO DESPLAZADO MÁS A LA IZQUIERDA */
   .hero-video-box {
     width: 100%;
     border-radius: 14px;
@@ -66,7 +66,7 @@
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
     background: rgba(15, 15, 15, 0.8);
     backdrop-filter: blur(8px);
-    transform: translateX(-15px) translateY(-10px);
+    transform: translateX(-65px) translateY(-10px);
   }
 
   .video-container {
@@ -87,7 +87,16 @@
   .eyebrow .blink{ width:7px; height:7px; border-radius:50%; background:var(--rec); animation:pulse 1.6s infinite; }
   @keyframes pulse{0%,100%{opacity:1} 50%{opacity:.25}}
   
-  .hero h1{ font-size:clamp(34px, 5.6vw, 68px); font-weight:700; letter-spacing:-0.03em; line-height:1; max-width:16ch; color:#fff; font-family:'Space Grotesk', sans-serif; text-transform:none; }
+  .hero h1{ 
+    font-size:clamp(34px, 5.6vw, 68px); 
+    font-weight:700; 
+    letter-spacing:-0.03em; 
+    line-height:1; 
+    max-width:16ch; 
+    color:#fff; 
+    font-family: Arial, sans-serif; 
+    text-transform:none; 
+  }
   .hero p{ margin-top:22px; max-width:50ch; color:#ccc; font-size:15.5px; line-height:1.6; font-family:'Space Grotesk', sans-serif; }
   
   .combo{ margin:6vh 6vw 0; padding:26px 28px; background:rgba(20,20,20,0.9); border:1px solid rgba(255,255,255,0.15); color:var(--bg); border-radius:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px; backdrop-filter:blur(8px); }
@@ -200,7 +209,7 @@
     <!-- COLUMNA IZQUIERDA: TEXTOS Y AVISO -->
     <div>
       <div class="eyebrow"><span class="blink"></span> presets vocales · fl studio</div>
-      <h1>soltá el mouse, cargá el preset y que suene.</h1>
+      <h1>soltá el mouse, cargá el preset y fue.</h1>
       <p>Cadenas de plugins listas para cargar. Elegí tu preset, pagá de forma segura y recibí el contenido al instante.</p>
       
       <div style="background: rgba(0,0,0,0.5); border-left: 4px solid #fff; padding: 14px 16px; margin-top: 24px; border-radius: 0 8px 8px 0; max-width: 50ch; font-size: 14px; color: #ddd; line-height: 1.5; backdrop-filter: blur(4px);">
@@ -208,7 +217,7 @@
       </div>
     </div>
 
-    <!-- COLUMNA DERECHA: VIDEO DE YOUTUBE ENMARCADO Y DESPLAZADO -->
+    <!-- COLUMNA DERECHA: VIDEO DESPLAZADO HASTA LA LÍNEA ROJA -->
     <div class="hero-video-box">
       <div class="video-container">
         <iframe src="https://www.youtube.com/embed/M7Ebp3qrChc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
