@@ -9,11 +9,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root{ --bg:#080808; --ink:#ffffff; --line:rgba(255,255,255,0.12); --mute:#aaaaaa; --rec:#ff3b30; --panel:rgba(18,18,18,0.85); }
+  :root{ --bg:#080808; --ink:#ffffff; --line:rgba(255,255,255,0.12); --mute:#aaaaaa; --rec:#ff3b30; }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
   
-  /* FONDO GENERAL CON TU IMAGEN Y BLUR */
   body{ 
     background-color: var(--bg);
     color: var(--ink); 
@@ -233,7 +232,7 @@
     row.innerHTML = `<div class="ch-num mono">${String(i+1).padStart(2,'0')}</div><div class="ch-name">${name}</div><div class="ch-price mono">$30.000</div><button class="buy-btn">Comprar</button>`;
 
     const buyBtn = row.querySelector('.buy-btn');
-    buyBtn.issue ? null : buyBtn.addEventListener('click', (e) => {
+    buyBtn.addEventListener('click', (e) => {
       e.stopPropagation(); 
       openIndividualModal(name);
     });
@@ -242,7 +241,7 @@
       const idx = selected.indexOf(i);
       if(idx !== -1){
         selected.splice(idx, 1);
-        row.classList.0 ? null : row.classList.remove('selected');
+        row.classList.remove('selected');
       } else {
         if(selected.length === 2){
           const removedIndex = selected.shift();
