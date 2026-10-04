@@ -85,16 +85,14 @@
   .combo-bar span{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--mute); }
   .combo-bar button{ font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; border:none; cursor:pointer; color:var(--bg); background:var(--ink); padding:13px 22px; border-radius:999px; }
   
-  /* ESTILOS DEL MODAL Y INPUT DE CORREO */
+  /* ESTILOS DEL MODAL */
   .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); display: flex; justify-content: center; align-items: center; z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
   .modal-overlay.active { opacity: 1; pointer-events: auto; }
   .modal-box { background: #141414; border: 1px solid var(--line); color: var(--ink); padding: 32px; border-radius: 16px; max-width: 420px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
   .modal-box h3 { font-size: 20px; margin-bottom: 12px; line-height:1.2; }
   .modal-box p { font-size: 14.5px; color: var(--mute); margin-bottom: 16px; line-height: 1.6; }
   .modal-box strong { color: var(--ink); }
-  
-  .email-input { width: 100%; padding: 12px 14px; margin-bottom: 16px; background: #080808; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-size: 14px; outline: none; }
-  .email-input:focus { border-color: var(--ink); }
+  .modal-box .important-note { color: #ff3b30; font-size: 13px; margin-top: 10px; font-family: 'JetBrains Mono', monospace; }
   
   .modal-action-btn { display: block; width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 10px; text-align: center; text-decoration: none; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; transition: transform 0.1s ease; border: none; cursor: pointer; }
   .modal-action-btn:active { transform: scale(0.98); }
@@ -158,17 +156,16 @@
   <button id="comboBarBtn">Confirmar 2x1 y Pagar</button>
 </div>
 
-<!-- VENTANITA EMERGENTE (MODAL CON CAMPO DE EMAIL) -->
+<!-- VENTANITA EMERGENTE (MODAL) -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal-box">
     <h3 id="modalTitle">Estás por comprar</h3>
     <p id="modalText">
-      Ingresá tu correo electrónico para enviarte el preset al instante de confirmar el pago.
+      Hacé clic en el botón de abajo para completar el pago de forma segura en Mercado Pago.<br><br>
+      <span class="important-note">⚠️️ IMPORTANTE: Una vez hecho el pago, revisá tu bandeja de entrada o apartado de SPAM, ahí te llega el archivo.</span>
     </p>
     
-    <input type="email" id="userEmail" class="email-input" placeholder="tu_correo@gmail.com" required>
-    
-    <a href="#" class="modal-action-btn btn-mp" id="btnMpDirect" target="_blank">Continuar a Mercado Pago</a>
+    <a href="#" class="modal-action-btn btn-mp" id="btnMpDirect" target="_blank">Pagar en Mercado Pago</a>
     
     <button class="btn-close-modal" id="btnCloseModal">Cancelar</button>
   </div>
@@ -199,39 +196,22 @@
   const modalOverlay = document.getElementById('modalOverlay');
   const modalTitle = document.getElementById('modalTitle');
   const modalText = document.getElementById('modalText');
-  const userEmail = document.getElementById('userEmail');
   const btnMpDirect = document.getElementById('btnMpDirect');
   const btnCloseModal = document.getElementById('btnCloseModal');
 
-  let currentLink = LINK_1;
-
   function openIndividualModal(presetName) {
     modalTitle.textContent = "Comprar: " + presetName;
-    modalText.innerHTML = `<strong>Preset:</strong> ${presetName} ($15.000).<br>Ingresá tu mail para recibir el archivo:`;
-    currentLink = LINK_1;
-    userEmail.value = "";
+    modalText.innerHTML = `<strong>Preset:</strong> ${presetName} ($15.000).<br>Hacé clic en el botón para abonar con Mercado Pago.<br><br><span class="important-note">⚠️ IMPORTANTE: Revisá tu bandeja de entrada y la carpeta de SPAM, ahí te llega el archivo.</span>`;
+    btnMpDirect.href = LINK_1;
     modalOverlay.classList.add('active');
   }
 
   function openComboModal(names) {
     modalTitle.textContent = "Promo 2x1 — $27.000";
-    modalText.innerHTML = `<strong>Presets elegidos:</strong><br>- ${names[0]}<br>- ${names[1]}<br>Ingresá tu mail para recibir los archivos:`;
-    currentLink = LINK_2X1;
-    userEmail.value = "";
+    modalText.innerHTML = `<strong>Presets elegidos:</strong><br>- ${names[0]}<br>- ${names[1]}<br>Hacé clic en el botón para abonar la promo.<br><br><span class="important-note">⚠️ IMPORTANTE: Revisá tu bandeja de entrada y la carpeta de SPAM, ahí te llega el archivo.</span>`;
+    btnMpDirect.href = LINK_2X1;
     modalOverlay.classList.add('active');
   }
-
-  btnMpDirect.addEventListener('click', (e) => {
-    const email = userEmail.value.trim();
-    if(!email || !email.includes('@')){
-      e.preventDefault();
-      alert('Por favor, ingresá un correo electrónico válido.');
-      userEmail.focus();
-      return;
-    }
-    // Opcional: si querés guardar el correo localmente o pasarlo a MP
-    btnMpDirect.href = currentLink;
-  });
 
   btnCloseModal.addEventListener('click', () => modalOverlay.classList.remove('active'));
   modalOverlay.addEventListener('click', (e) => { if(e.target === modalOverlay) modalOverlay.classList.remove('active'); });
