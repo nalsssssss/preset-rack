@@ -3,183 +3,67 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>nadir :)</title>
+<title>PRESET RACK</title>
 <link rel="icon" type="image/png" href="icono.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-JRY65RTJ4B"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-JRY65RTJ4B');
-</script>
-
 <style>
   :root{ --bg:#ffffff; --ink:#0a0a0a; --line:#e4e4e4; --mute:#8a8a8a; --rec:#ff3b30; --panel:#f7f7f7; }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
-  
-  /* FONDO DE LA PÁGINA CON TU FOTO */
-  body{ 
-    background: linear-gradient(rgba(0,0,0,0.68), rgba(0,0,0,0.68)), url('fondo.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    color: var(--bg); 
-    font-family:'Space Grotesk', sans-serif; 
-    -webkit-font-smoothing:antialiased; 
-  }
-
+  body{ background:var(--bg); color:var(--ink); font-family:'Space Grotesk', sans-serif; -webkit-font-smoothing:antialiased; }
   .mono{font-family:'JetBrains Mono', monospace;}
-  
-  header{ padding:24px 6vw; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.15); position:sticky; top:0; background:rgba(10,10,10,0.85); backdrop-filter:blur(10px); z-index:50; }
-  .logo{ font-weight:700; font-size:19px; letter-spacing:-0.02em; display:flex; align-items:center; gap:10px; color:#fff; font-family:'Space Grotesk', sans-serif; }
-  .logo .dot{ width:9px; height:9px; border-radius:50%; background:#fff; }
-  
-  /* NAV Y ICONOS SOCIALES */
-  .nav-links { display: flex; align-items: center; gap: 20px; }
-  .social-icon { display: flex; align-items: center; opacity: 0.7; transition: opacity 0.2s, transform 0.2s; }
-  .social-icon:hover { opacity: 1; transform: translateY(-2px); }
-  .social-icon svg { width: 20px; height: 20px; fill: #fff; }
-
-  .hero{ padding:8vh 6vw 6vh; border-bottom:1px solid rgba(255,255,255,0.15); background:rgba(10,10,10,0.4); backdrop-filter:blur(6px); }
-  
-  /* DISTRIBUCIÓN DE DOS COLUMNAS */
-  .hero-content {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    align-items: flex-start;
-    gap: 20px;
-  }
-
-  /* CAJA CON BORDE PARA EL VIDEO MÁS CORRIDO A LA IZQUIERDA */
-  .hero-video-box {
-    width: 100%;
-    border-radius: 14px;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-    background: rgba(15, 15, 15, 0.8);
-    backdrop-filter: blur(8px);
-    transform: translateX(-100px) translateY(-10px);
-  }
-
-  .video-container {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-  }
-  .video-container iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-  }
-
-  .eyebrow{ font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:#bbb; display:flex; align-items:center; gap:8px; margin-bottom:20px; }
+  header{ padding:24px 6vw; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); position:sticky; top:0; background:rgba(255,255,255,.92); backdrop-filter:blur(6px); z-index:50; }
+  .logo{ font-weight:700; font-size:19px; letter-spacing:-0.02em; display:flex; align-items:center; gap:10px; }
+  .logo .dot{ width:9px; height:9px; border-radius:50%; background:var(--ink); }
+  nav a{ color:var(--ink); text-decoration:none; font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; opacity:.6; margin-left:22px; }
+  .hero{ padding:11vh 6vw 6vh; border-bottom:1px solid var(--line); }
+  .eyebrow{ font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--mute); display:flex; align-items:center; gap:8px; margin-bottom:20px; }
   .eyebrow .blink{ width:7px; height:7px; border-radius:50%; background:var(--rec); animation:pulse 1.6s infinite; }
   @keyframes pulse{0%,100%{opacity:1} 50%{opacity:.25}}
-  
-  .hero h1{ 
-    font-size:clamp(34px, 5.6vw, 68px); 
-    font-weight:700; 
-    letter-spacing:-0.03em; 
-    line-height:1; 
-    max-width:16ch; 
-    color:#fff; 
-    font-family: Arial, sans-serif; 
-    text-transform:none; 
-  }
-  .hero p{ margin-top:22px; max-width:50ch; color:#ccc; font-size:15.5px; line-height:1.6; font-family:'Space Grotesk', sans-serif; }
-  
-  .combo{ margin:6vh 6vw 0; padding:26px 28px; background:rgba(20,20,20,0.9); border:1px solid rgba(255,255,255,0.15); color:var(--bg); border-radius:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px; backdrop-filter:blur(8px); }
-  .combo-txt b{ display:block; font-size:18px; margin-bottom:4px; color:#fff; }
+  .hero h1{ font-size:clamp(34px, 5.6vw, 68px); font-weight:700; letter-spacing:-0.03em; line-height:1; max-width:16ch; }
+  .hero p{ margin-top:22px; max-width:50ch; color:var(--mute); font-size:15.5px; line-height:1.6; }
+  .combo{ margin:6vh 6vw 0; padding:26px 28px; background:var(--ink); color:var(--bg); border-radius:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px; }
+  .combo-txt b{ display:block; font-size:18px; margin-bottom:4px; }
   .combo-txt span{ font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#bbbbbb; }
-  
   .rack{ padding:8vh 6vw 14vh; }
-  .rack-head{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:26px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:14px; color:#fff; }
-  .rack-head h2{ font-size:15px; letter-spacing:.04em; font-family:'Space Grotesk', sans-serif; }
-  .rack-head span{ font-family:'JetBrains Mono', monospace; font-size:12px; color:#bbb; }
-  
-  /* FILA DE PRESETS CON TRANSICIÓN MUY SMOOTH */
-  .channel{ 
-    display:grid; 
-    grid-template-columns: 44px 1fr 140px 130px; 
-    align-items:center; 
-    gap:18px; 
-    padding:18px 16px; 
-    border-bottom:1px solid rgba(255,255,255,0.1); 
-    background: rgba(15, 15, 15, 0.75);
-    backdrop-filter: blur(6px);
-    margin-bottom: 8px;
-    border-radius: 8px;
-    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
-    cursor:pointer; 
-  }
-  .channel:hover{ 
-    background: rgba(255, 255, 255, 0.95);
-    color: #0a0a0a;
-    transform: translateX(6px) scale(1.005);
-    box-shadow: 0 12px 35px rgba(0,0,0,0.4);
-    border-color: transparent;
-  }
-  .channel:hover .ch-num{ color: #0a0a0a; opacity: 0.6; }
-  .channel:hover .ch-price{ color: #0a0a0a; }
-  .channel:hover .old-price{ color: #666; }
-  .channel:hover .buy-btn{ background: #0a0a0a; color: #ffffff; opacity: 1; }
-
-  .channel.selected{ background: rgba(255, 255, 255, 0.9); color: #0a0a0a; box-shadow: inset 4px 0 0 #0a0a0a, 0 12px 35px rgba(0,0,0,0.4); }
-  .channel.selected .ch-num{ color: #0a0a0a; font-weight:700; }
-  .channel.selected .ch-price{ color: #0a0a0a; }
-  .channel.selected .old-price{ color: #666; }
-  .channel.selected .buy-btn{ background: #0a0a0a; color: #fff; }
-
-  .ch-num{ font-family:'JetBrains Mono', monospace; font-size:12px; color:#aaa; transition: color 0.3s; }
-  .ch-name{ font-size:15.5px; font-weight:500; letter-spacing:-0.01em; font-family:'Space Grotesk', sans-serif; }
-  
-  /* PRECIOS CON TACHADO */
-  .price-container { display: flex; align-items: center; gap: 8px; }
-  .old-price { font-family:'JetBrains Mono', monospace; font-size: 12.5px; color: #777; text-decoration: line-through; transition: color 0.3s; }
-  .ch-price{ font-family:'JetBrains Mono', monospace; font-weight:700; font-size:14.5px; color:#fff; transition: color 0.3s; }
-  
-  .buy-btn{ font-family:'JetBrains Mono', monospace; font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; text-decoration:none; color:#0a0a0a; background:#ffffff; padding:10px 14px; border-radius:999px; text-align:center; white-space:nowrap; transition:all .3s cubic-bezier(0.25, 1, 0.5, 1); border:none; cursor:pointer; }
-  .buy-btn:hover{ opacity:.85; transform: scale(1.03); }
-
-  footer{ padding:6vh 6vw; border-top:1px solid rgba(255,255,255,0.15); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; background:rgba(10,10,10,0.85); backdrop-filter:blur(10px); color:#fff; }
-  footer p{ font-family:'JetBrains Mono', monospace; font-size:12px; color:#aaa; }
-  
-  .combo-bar{ position:fixed; left:0; right:0; bottom:0; background:rgba(10,10,10,0.95); backdrop-filter:blur(12px); border-top:1px solid rgba(255,255,255,0.2); color:#fff; padding:16px 6vw; display:flex; justify-content:space-between; align-items:center; gap:14px; transform:translateY(120%); transition:transform .3s cubic-bezier(0.25, 1, 0.5, 1); z-index:60; flex-wrap:wrap; }
+  .rack-head{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:26px; border-bottom:1px solid var(--line); padding-bottom:14px; }
+  .rack-head h2{ font-size:15px; letter-spacing:.04em; }
+  .rack-head span{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--mute); }
+  .channel{ display:grid; grid-template-columns: 44px 1fr 90px 130px; align-items:center; gap:18px; padding:17px 14px; border-bottom:1px solid var(--line); transition:background .15s ease; cursor:pointer; }
+  .channel:hover{ background:var(--panel); }
+  .channel.selected{ background:var(--panel); box-shadow: inset 3px 0 0 var(--ink); }
+  .channel.selected .ch-num{ color:var(--ink); font-weight:700; }
+  .ch-num{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--mute); }
+  .ch-name{ font-size:15.5px; font-weight:500; letter-spacing:-0.01em; }
+  .ch-price{ font-family:'JetBrains Mono', monospace; font-weight:700; font-size:14.5px; }
+  .buy-btn{ font-family:'JetBrains Mono', monospace; font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; text-decoration:none; color:var(--bg); background:var(--ink); padding:10px 14px; border-radius:999px; text-align:center; white-space:nowrap; transition:opacity .15s ease; border:none; cursor:pointer; }
+  .buy-btn:hover{ opacity:.75; }
+  footer{ padding:6vh 6vw 6vh; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; }
+  footer p{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--mute); }
+  .combo-bar{ position:fixed; left:0; right:0; bottom:0; background:var(--ink); color:var(--bg); padding:16px 6vw; display:flex; justify-content:space-between; align-items:center; gap:14px; transform:translateY(120%); transition:transform .25s ease; z-index:60; flex-wrap:wrap; }
   .combo-bar.show{ transform:translateY(0); }
   .combo-bar b{ font-size:14px; display:block; }
-  .combo-bar span{ font-family:'JetBrains Mono', monospace; font-size:12px; color:#bbb; }
-  .combo-bar button{ font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; border:none; cursor:pointer; color:#0a0a0a; background:#fff; padding:13px 22px; border-radius:999px; font-weight: bold; transition: transform 0.2s; }
-  .combo-bar button:hover{ transform: scale(1.03); }
+  .combo-bar span{ font-family:'JetBrains Mono', monospace; font-size:12px; color:#bbbbbb; }
+  .combo-bar button{ font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; border:none; cursor:pointer; color:var(--ink); background:var(--bg); padding:13px 22px; border-radius:999px; }
   
   /* ESTILOS DEL MODAL */
-  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); display: flex; justify-content: center; align-items: center; z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
   .modal-overlay.active { opacity: 1; pointer-events: auto; }
-  .modal-box { background: #121212; color: #fff; padding: 32px; border-radius: 16px; max-width: 420px; width: 90%; box-shadow: 0 20px 50px rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.1); font-family: 'Space Grotesk', sans-serif; }
-  .modal-box h3 { font-size: 20px; margin-bottom: 12px; line-height:1.2; color:#fff; }
-  .modal-box p { font-size: 14.5px; color: #aaa; margin-bottom: 16px; line-height: 1.6; }
-  .modal-box strong { color: #fff; }
+  .modal-box { background: var(--bg); color: var(--ink); padding: 32px; border-radius: 16px; max-width: 420px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+  .modal-box h3 { font-size: 20px; margin-bottom: 12px; line-height:1.2; }
+  .modal-box p { font-size: 14.5px; color: var(--mute); margin-bottom: 16px; line-height: 1.6; }
+  .modal-box strong { color: var(--ink); }
   
   .modal-action-btn { display: block; width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 10px; text-align: center; text-decoration: none; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; transition: transform 0.1s ease; border: none; cursor: pointer; }
   .modal-action-btn:active { transform: scale(0.98); }
   .btn-mp { background: #009EE3; color: white; }
-  .btn-close-modal { display: block; width: 100%; padding: 12px; background: transparent; border: none; color: #888; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 500; margin-top: 8px; text-decoration: underline; }
-  .btn-close-modal:hover { color: #fff; }
+  .btn-close-modal { display: block; width: 100%; padding: 12px; background: transparent; border: none; color: var(--mute); cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 500; margin-top: 8px; text-decoration: underline; }
+  .btn-close-modal:hover { color: var(--ink); }
   
-  @media (max-width:900px){
-    .hero-content { grid-template-columns: 1fr; }
-    .hero-video-box { transform: none; }
-    .channel{ grid-template-columns: 1fr; row-gap:10px; padding:20px 14px; }
+  @media (max-width:820px){
+    .channel{ grid-template-columns: 1fr; row-gap:10px; padding:20px 4px; }
     .ch-num{ display:none; }
     .buy-btn{ width:100%; padding:13px; }
     .combo{ flex-direction:column; align-items:flex-start; }
@@ -192,55 +76,30 @@
 
 <header>
   <div class="logo"><span class="dot"></span> PRESET&nbsp;RACK</div>
-  <div class="nav-links">
-    <!-- ICONO DE INSTAGRAM -->
-    <a href="https://www.instagram.com/nadir.1880/?theme=dark" target="_blank" class="social-icon" title="Instagram">
-      <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-    </a>
-    <!-- ICONO DE YOUTUBE -->
-    <a href="https://www.youtube.com/@nadir7945" target="_blank" class="social-icon" title="YouTube">
-      <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-    </a>
-  </div>
+  <nav><a href="#rack">CATÁLOGO</a></nav>
 </header>
 
 <section class="hero">
-  <div class="hero-content">
-    <!-- COLUMNA IZQUIERDA: TEXTOS Y AVISO -->
-    <div>
-      <div class="eyebrow"><span class="blink"></span> presets vocales · fl studio</div>
-      <h1>soltá el mouse, cargá el preset y fue.</h1>
-      <p>Cadenas de plugins listas para cargar. Elegí tu preset, pagá de forma segura y recibí el contenido al instante.</p>
-      
-      <div style="background: rgba(0,0,0,0.5); border-left: 4px solid #fff; padding: 14px 16px; margin-top: 24px; border-radius: 0 8px 8px 0; max-width: 50ch; font-size: 14px; color: #ddd; line-height: 1.5; backdrop-filter: blur(4px);">
-        <b>Importante:</b> Recordá que para poder utilizar bien los presets tenés que tener los plugins que utilizo en el video (Waves, FabFilter, etc.).
-      </div>
-    </div>
-
-    <!-- COLUMNA DERECHA: NUEVO VIDEO DE YOUTUBE -->
-    <div class="hero-video-box">
-      <div class="video-container">
-        <iframe src="https://www.youtube.com/embed/0ixpB5zpAgo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      </div>
-    </div>
-  </div>
+  <div class="eyebrow"><span class="blink"></span> presets vocales · fl studio</div>
+  <h1>Voces mezcladas antes de tocar un fader.</h1>
+  <p>Cadenas de plugins listas para cargar. Elegí tu preset, pagá de forma segura y recibí el contenido al instante.</p>
 </section>
 
 <div class="combo" id="comboBanner">
   <div class="combo-txt">
-    <b>Combo x2 — llevate dos por $15.000</b>
-    <span class="mono" id="comboHint">Tocá dos presets de la lista de abajo para aplicar el descuento</span>
+    <b>2x1 — llevate dos por $55.000</b>
+    <span class="mono" id="comboHint">Tocá dos presets de la lista de abajo para elegirlos</span>
   </div>
   <span class="mono" id="comboCount" style="opacity:.7;">0/2 elegidos</span>
 </div>
 
-<p class="mono" style="padding: 24px 6vw 12px; color: #aaa; font-size: 12px; letter-spacing: .02em; line-height: 1.5;">
+<p class="mono" style="padding:14px 6vw 0; color:var(--mute); font-size:12px; letter-spacing:.02em;">
   Máximo 2 presets por compra. ¿Querés más? Hacés otra compra aparte.
 </p>
 
 <section class="rack" id="rack">
   <div class="rack-head">
-    <h2>Catálogo — <span style="text-decoration: line-through; color: #888; font-size: 13px;">$10.000</span> $8.500 c/u</h2>
+    <h2>Catálogo — $30.000 c/u</h2>
     <span class="mono" id="count">26 presets</span>
   </div>
   <div id="list"></div>
@@ -254,9 +113,9 @@
 <div class="combo-bar" id="comboBar">
   <div>
     <b id="comboBarNames">—</b>
-    <span>Combo x2 seleccionado ($15.000)</span>
+    <span>Promo 2x1 seleccionada ($55.000)</span>
   </div>
-  <button id="comboBarBtn">Confirmar Combo y Pagar</button>
+  <button id="comboBarBtn">Confirmar 2x1 y Pagar</button>
 </div>
 
 <!-- VENTANITA EMERGENTE (MODAL) -->
@@ -265,31 +124,19 @@
     <h3 id="modalTitle">Estás por comprar</h3>
     <p id="modalText">
       <strong>Instrucciones:</strong><br>
-      Ingresá tu mail (ahí te llega el archivo apenas se acredite el pago) y tocá el botón para ir a pagar.
+      Tocá el botón de abajo para completar el pago de forma segura en Mercado Pago.
     </p>
-
-    <input type="email" id="emailInput" placeholder="tu-mail@ejemplo.com" required
-      style="width:100%; padding:13px 14px; margin-bottom:10px; background:#1e1e1e; border:1px solid #333; color:#fff; border-radius:10px; font-family:'Space Grotesk',sans-serif; font-size:15px;">
-
-    <!-- AVISO DE SPAM CON TUS PALABRAS TEXTUALES Y COMA -->
-    <div style="background: rgba(255,255,255,0.06); border-left: 4px solid #ffc107; padding: 10px 12px; margin-bottom: 14px; font-size: 12.5px; color: #ddd; line-height: 1.4;">
-      Crack, idolo, master, al momento de efectuar el pago fijate la parte de <b>SPAM</b> en tu mail.
-    </div>
-
-    <button class="modal-action-btn btn-mp" id="btnMpDirect">Pagar en Mercado Pago</button>
     
-    <!-- AVISO DE PAYPAL DENTRO DEL MODAL -->
-    <p style="font-size: 12.5px; color: #aaa; text-align: center; margin-top: 12px; line-height: 1.4;">
-      ¿Querés pagar por <b>PayPal</b>? Mandame un MD a mi <a href="https://www.instagram.com/nadir.1880/?theme=dark" target="_blank" style="color: #fff; text-decoration: underline;">Instagram</a>.
-    </p>
-
-    <p id="modalError" style="color:#ff6b6b; font-size:13px; margin:8px 0 0; display:none;"></p>
-
+    <a href="#" class="modal-action-btn btn-mp" id="btnMpDirect" target="_blank">Pagar en Mercado Pago</a>
+    
     <button class="btn-close-modal" id="btnCloseModal">Cancelar</button>
   </div>
 </div>
 
 <script>
+  const LINK_1 = "https://mpago.la/28HGvWj";  // $30.000
+  const LINK_2X1 = "https://mpago.la/2yqch5V"; // $55.000 (Promo 2x1)
+
   const presets = [
     "HUNTR", "JUANSSIN", "SHAKO", "CEROASTERISCO", "ENZOCEROBULTO", 
     "ONEY1", "SALAS FLACO", "JOSHU JOSHU", "ROJUU (salsa valentina)", 
@@ -311,67 +158,25 @@
   const modalOverlay = document.getElementById('modalOverlay');
   const modalTitle = document.getElementById('modalTitle');
   const modalText = document.getElementById('modalText');
-  const emailInput = document.getElementById('emailInput');
   const btnMpDirect = document.getElementById('btnMpDirect');
-  const modalError = document.getElementById('modalError');
   const btnCloseModal = document.getElementById('btnCloseModal');
 
-  let pendingPresets = [];
-
-  function openModal(names) {
-    pendingPresets = names;
-    emailInput.value = '';
-    modalError.style.display = 'none';
-    btnMpDirect.disabled = false;
-    btnMpDirect.textContent = 'Pagar en Mercado Pago';
-
-    if (names.length === 2) {
-      modalTitle.textContent = "Combo x2 — $15.000";
-      modalText.innerHTML = `<strong>Presets elegidos:</strong><br>- ${names[0]}<br>- ${names[1]}`;
-    } else {
-      modalTitle.textContent = "Comprar: " + names[0];
-      modalText.innerHTML = `<strong>Preset:</strong> ${names[0]} ($8.500)`;
-    }
+  function openIndividualModal(presetName) {
+    modalTitle.textContent = "Comprar: " + presetName;
+    modalText.innerHTML = `<strong>Preset:</strong> ${presetName} ($30.000).<br><br>Hacé clic en el botón para abonar con Mercado Pago.`;
+    btnMpDirect.href = LINK_1;
     modalOverlay.classList.add('active');
   }
 
-  function openIndividualModal(presetName) { openModal([presetName]); }
-  function openComboModal(names) { openModal(names); }
+  function openComboModal(names) {
+    modalTitle.textContent = "Promo 2x1 — $55.000";
+    modalText.innerHTML = `<strong>Presets elegidos:</strong><br>- ${names[0]}<br>- ${names[1]}<br><br>Hacé clic en el botón para abonar la promo en Mercado Pago.`;
+    btnMpDirect.href = LINK_2X1;
+    modalOverlay.classList.add('active');
+  }
 
   btnCloseModal.addEventListener('click', () => modalOverlay.classList.remove('active'));
   modalOverlay.addEventListener('click', (e) => { if(e.target === modalOverlay) modalOverlay.classList.remove('active'); });
-
-  btnMpDirect.addEventListener('click', async () => {
-    const email = emailInput.value.trim();
-    modalError.style.display = 'none';
-
-    if (!email || !email.includes('@')) {
-      modalError.textContent = 'Poné un mail válido para poder mandarte el archivo.';
-      modalError.style.display = 'block';
-      return;
-    }
-
-    btnMpDirect.disabled = true;
-    btnMpDirect.textContent = 'Generando el pago...';
-
-    try {
-      const res = await fetch('/comprar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ presets: pendingPresets, email })
-      });
-
-      if (!res.ok) throw new Error('Falló la creación del pago');
-
-      const data = await res.json();
-      window.location.href = data.url;
-    } catch (err) {
-      modalError.textContent = 'Hubo un problema generando el pago. Probá de nuevo en unos segundos.';
-      modalError.style.display = 'block';
-      btnMpDirect.disabled = false;
-      btnMpDirect.textContent = 'Pagar en Mercado Pago';
-    }
-  });
 
   function refreshCombo(){
     comboCount.textContent = selected.length + "/2 elegidos";
@@ -387,15 +192,7 @@
   presets.forEach((name, i) => {
     const row = document.createElement('div');
     row.className = 'channel';
-    row.innerHTML = `
-      <div class="ch-num mono">${String(i+1).padStart(2,'0')}</div>
-      <div class="ch-name">${name}</div>
-      <div class="price-container">
-        <span class="old-price">$10.000</span>
-        <span class="ch-price mono">$8.500</span>
-      </div>
-      <button class="buy-btn">Comprar</button>
-    `;
+    row.innerHTML = `<div class="ch-num mono">${String(i+1).padStart(2,'0')}</div><div class="ch-name">${name}</div><div class="ch-price mono">$30.000</div><button class="buy-btn">Comprar</button>`;
 
     const buyBtn = row.querySelector('.buy-btn');
     buyBtn.addEventListener('click', (e) => {
@@ -428,5 +225,3 @@
 </script>
 </body>
 </html>
-
-
