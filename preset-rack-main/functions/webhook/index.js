@@ -87,7 +87,14 @@ export async function onRequest(context) {
     }
     const preset = url.searchParams.get('preset') || 'HUNTR';
     const to = url.searchParams.get('to');
-    if (!linksDrive[preset]) return new Response('Preset inexistente', { status: 400 });
+    if (!linksDrive[preset]) {
+      const nombres = Object.keys(linksDrive);
+      return new Response(
+        'Preset inexistente. Recibido: ' + JSON.stringify(preset) +
+        '\nEl servidor conoce ' + nombres.length + ' presets:\n' + nombres.join('\n'),
+        { status: 400, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } }
+      );
+    }
     if (!to) return new Response('Falta &to=correo', { status: 400 });
     try {
       const r = await sendEmail(env, {
