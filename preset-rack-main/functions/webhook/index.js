@@ -89,7 +89,7 @@ export async function onRequest(context) {
     if (!linksDrive[preset]) {
       const nombres = Object.keys(linksDrive);
       return new Response(
-        'Preset inexistente. Recibido: ' + JSON.stringify(preset) +
+        '🔥 VERSIÓN NUEVA 🔥 Preset inexistente. Recibido: ' + JSON.stringify(preset) +
         '\nEl servidor conoce ' + nombres.length + ' presets:\n' + nombres.join('\n'),
         { status: 400, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } }
       );
