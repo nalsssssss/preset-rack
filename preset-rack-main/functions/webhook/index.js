@@ -26,7 +26,7 @@ const linksDrive = {
   "SARAMALACARA": "https://drive.google.com/drive/folders/1f7Fso9BF4hNokCXNkxowJe8y9YSJKVUO?usp=sharing",
   "HYPERPOP (CAPOXXO)": "https://drive.google.com/drive/folders/10okQko6RUUBThF8VSeaf_FXiKdTMZVER?usp=sharing",
   "PLUGGNB": "https://drive.google.com/drive/folders/189GP0fig_LZb21MZ7XutMPzRqyFxMuXo?usp=sharing",
-  "SLIMESANTI": "https://drive.google.com/drive/folders/1ojpaxQokVDY7npHv00bVas8ubNIpvi-R?usp=sharing"
+  "SLIMESANTI": "https://drive.google.com/drive/folders/1ojpaxQokVDY7npHv00bVas8ubNIpvi-R?usp=sharing",
   "CERO ASTERISCO (yo pray)": "https://drive.google.com/drive/folders/1ojpaxQokVDY7npHv00bVas8ubNIpvi-R?usp=sharing",
 };
 
