@@ -27,7 +27,7 @@ const linksDrive = {
   "HYPERPOP (CAPOXXO)": "https://drive.google.com/drive/folders/10okQko6RUUBThF8VSeaf_FXiKdTMZVER?usp=sharing",
   "PLUGGNB": "https://drive.google.com/drive/folders/189GP0fig_LZb21MZ7XutMPzRqyFxMuXo?usp=sharing",
   "SLIMESANTI": "https://drive.google.com/drive/folders/1ojpaxQokVDY7npHv00bVas8ubNIpvi-R?usp=sharing",
-  "CERO ASTERISCO (yo pray)": "https://drive.google.com/drive/folders/1ojpaxQokVDY7npHv00bVas8ubNIpvi-R?usp=sharing"
+  "CERO ASTERISCO (yo pray)": "https://drive.google.com/drive/folders/1FVyLIsHhCIaJcU5k2Opv_8bfe3XuQBZ4?usp=drive_link"
 };
 
 const EMAIL_FROM = 'Preset Rack <soporte@nadirfl.xyz>';
