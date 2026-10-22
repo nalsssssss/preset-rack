@@ -1,331 +1,44 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PRESET RACK</title>
-<link rel="icon" type="image/png" href="icono.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-  :root{ --bg:#080808; --ink:#ffffff; --line:rgba(255,255,255,0.12); --mute:#aaaaaa; --rec:#ff3b30; }
-  *{box-sizing:border-box; margin:0; padding:0;}
-  html{scroll-behavior:smooth;}
-  
-  body{ 
-    background-color: var(--bg);
-    color: var(--ink); 
-    font-family: 'Space Grotesk', sans-serif; 
-    -webkit-font-smoothing: antialiased;
-    position: relative;
-    min-height: 100vh;
-  }
-  
-  body::before {
-    content: "";
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-image: url('fondo.jpg');
-    background-size: cover;
-    background-position: center;
-    filter: blur(8px);
-    transform: scale(1.05);
-    z-index: -2;
+// Cloudflare Pages Function — responde en /ventas
+// Uso: https://nadirfl.xyz/ventas?key=TU_TEST_KEY
+// Lista los últimos 30 pagos de la cuenta a la que pertenece tu MP_TOKEN.
+// Sirve para ver si un pago existe, en qué estado está y si es REAL o de PRUEBA.
+
+export async function onRequestGet({ request, env }) {
+  const url = new URL(request.url);
+  if (!env.TEST_KEY || url.searchParams.get('key') !== env.TEST_KEY) {
+    return new Response('No autorizado', { status: 401 });
   }
 
-  body::after {
-    content: "";
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.82);
-    z-index: -1;
-  }
+  const headers = { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' };
 
-  .mono{font-family:'JetBrains Mono', monospace;}
-  
-  header{ padding:24px 6vw; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); position:sticky; top:0; background:rgba(8,8,8,.75); backdrop-filter:blur(10px); z-index:50; }
-  .logo{ font-weight:700; font-size:19px; letter-spacing:-0.02em; display:flex; align-items:center; gap:10px; }
-  .logo .dot{ width:9px; height:9px; border-radius:50%; background:var(--rec); }
-  nav a{ color:var(--ink); text-decoration:none; font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; opacity:.6; margin-left:22px; }
-  
-  .hero{ padding:9vh 6vw 7vh; border-bottom:1px solid var(--line); display:grid; grid-template-columns: 1.1fr 0.9fr; gap:40px; align-items:center; }
-  .hero-content max-width{ max-width:52ch; }
-  .eyebrow{ font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--mute); display:flex; align-items:center; gap:8px; margin-bottom:18px; }
-  .eyebrow .blink{ width:7px; height:7px; border-radius:50%; background:var(--rec); animation:pulse 1.6s infinite; }
-  @keyframes pulse{0%,100%{opacity:1} 50%{opacity:.25}}
-  .hero h1{ font-size:clamp(32px, 4.6vw, 56px); font-weight:700; letter-spacing:-0.03em; line-height:1.05; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-  .hero p{ margin-top:18px; color:var(--mute); font-size:15px; line-height:1.6; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
-  
-  .hero-video-box { width: 100%; aspect-ratio: 16/9; background: #111; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 8px 30px rgba(0,0,0,0.6); }
-  .hero-video-box iframe { width: 100%; height: 100%; border: none; }
-
-  .combo{ margin:6vh 6vw 0; padding:26px 28px; background:rgba(20,20,20,0.9); border:1px solid var(--line); backdrop-filter:blur(6px); color:var(--ink); border-radius:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px; }
-  .combo-txt b{ display:block; font-size:18px; margin-bottom:4px; }
-  .combo-txt span{ font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--mute); }
-  
-  .rack{ padding:8vh 6vw 14vh; }
-  .rack-head{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:26px; border-bottom:1px solid var(--line); padding-bottom:14px; }
-  .rack-head h2{ font-size:15px; letter-spacing:.04em; }
-  .rack-head span{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--mute); }
-  
-  .channel{ display:grid; grid-template-columns: 44px 1fr 90px 130px; align-items:center; gap:18px; padding:17px 14px; border-bottom:1px solid var(--line); transition:background .15s ease; cursor:pointer; background: rgba(12,12,12,0.4); }
-  .channel:hover{ background:rgba(30,30,30,0.7); }
-  .channel.selected{ background:rgba(30,30,30,0.85); box-shadow: inset 3px 0 0 var(--ink); }
-  .channel.selected .ch-num{ color:var(--ink); font-weight:700; }
-  .ch-num{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--mute); }
-  .ch-name{ font-size:15.5px; font-weight:500; letter-spacing:-0.01em; }
-  .ch-price{ font-family:'JetBrains Mono', monospace; font-weight:700; font-size:14.5px; }
-  
-  .buy-btn{ font-family:'JetBrains Mono', monospace; font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; text-decoration:none; color:var(--bg); background:var(--ink); padding:10px 14px; border-radius:999px; text-align:center; white-space:nowrap; transition:opacity .15s ease; border:none; cursor:pointer; }
-  .buy-btn:hover{ opacity:.75; }
-  
-  footer{ padding:6vh 6vw 6vh; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; background:rgba(8,8,8,0.7); }
-  footer p{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--mute); }
-  
-  .combo-bar{ position:fixed; left:0; right:0; bottom:0; background:rgba(15,15,15,0.95); border-top:1px solid var(--line); backdrop-filter:blur(8px); color:var(--ink); padding:16px 6vw; display:flex; justify-content:space-between; align-items:center; gap:14px; transform:translateY(120%); transition:transform .25s ease; z-index:60; flex-wrap:wrap; }
-  .combo-bar.show{ transform:translateY(0); }
-  .combo-bar b{ font-size:14px; display:block; }
-  .combo-bar span{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--mute); }
-  .combo-bar button{ font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; border:none; cursor:pointer; color:var(--bg); background:var(--ink); padding:13px 22px; border-radius:999px; }
-  
-  /* ESTILOS DEL MODAL */
-  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); display: flex; justify-content: center; align-items: center; z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-  .modal-overlay.active { opacity: 1; pointer-events: auto; }
-  .modal-box { background: #141414; border: 1px solid var(--line); color: var(--ink); padding: 32px; border-radius: 16px; max-width: 420px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-  .modal-box h3 { font-size: 20px; margin-bottom: 8px; line-height:1.2; }
-  .modal-box p { font-size: 14px; color: var(--mute); margin-bottom: 14px; line-height: 1.5; }
-  .modal-box strong { color: var(--ink); }
-  
-  .input-group { margin-bottom: 14px; text-align: left; }
-  .input-group label { display: block; font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--mute); margin-bottom: 6px; text-transform: uppercase; }
-  .input-group input { width: 100%; padding: 12px; background: #0a0a0a; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-size: 14px; outline: none; transition: border-color 0.15s; }
-  .input-group input:focus { border-color: var(--ink); }
-
-  .important-note { color: #ff3b30; font-size: 12px; margin-bottom: 14px; font-family: 'JetBrains Mono', monospace; line-height: 1.4; display: block; }
-  .alt-pay { font-size: 13px; color: var(--mute); text-align: center; margin-top: 14px; }
-  .alt-pay a { color: var(--ink); text-decoration: underline; font-weight: 700; }
-  
-  .modal-action-btn { display: block; width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 10px; text-align: center; text-decoration: none; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; transition: transform 0.1s ease; border: none; cursor: pointer; }
-  .modal-action-btn:active { transform: scale(0.98); }
-  .btn-mp { background: #009EE3; color: white; }
-  .btn-close-modal { display: block; width: 100%; padding: 8px; background: transparent; border: none; color: var(--mute); cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 500; margin-top: 4px; text-decoration: underline; }
-  .btn-close-modal:hover { color: var(--ink); }
-  
-  @media (max-width:960px){
-    .hero{ grid-template-columns: 1fr; gap:30px; }
-    .channel{ grid-template-columns: 1fr; row-gap:10px; padding:20px 4px; }
-    .ch-num{ display:none; }
-    .buy-btn{ width:100%; padding:13px; }
-    .combo{ flex-direction:column; align-items:flex-start; }
-    .combo-bar{ flex-direction:column; align-items:flex-start; }
-    .combo-bar button{ width:100%; }
-  }
-</style>
-</head>
-<body>
-
-<header>
-  <div class="logo"><span class="dot"></span> PRESET&nbsp;RACK</div>
-  <nav><a href="#rack">CATÁLOGO</a></nav>
-</header>
-
-<section class="hero">
-  <div class="hero-content">
-    <div class="eyebrow"><span class="blink"></span> presets vocales · fl studio</div>
-    <h1>Voces mezcladas antes de tocar un fader.</h1>
-    <p>Cadenas de plugins listas para cargar. Elegí tu preset, pagá de forma segura y recibí el contenido al instante.</p>
-  </div>
-  <div class="hero-video-box">
-    <iframe src="https://www.youtube.com/embed/0ixpB5zpAgo" title="Video explicativo" allowfullscreen></iframe>
-  </div>
-</section>
-
-<div class="combo" id="comboBanner">
-  <div class="combo-txt">
-    <b>Llevate 2 presets por $20.000</b>
-    <span class="mono" id="comboHint">Tocá dos presets de la lista de abajo para elegirlos</span>
-  </div>
-  <span class="mono" id="comboCount" style="opacity:.7;">0/2 elegidos</span>
-</div>
-
-<p class="mono" style="padding:14px 6vw 0; color:var(--mute); font-size:12px; letter-spacing:.02em;">
-  Máximo 2 presets por compra. ¿Querés más? Hacés otra compra aparte.
-</p>
-
-<section class="rack" id="rack">
-  <div class="rack-head">
-    <h2>Catálogo — $12.000 c/u</h2>
-    <span class="mono" id="count">28 presets</span>
-  </div>
-  <div id="list"></div>
-</section>
-
-<footer>
-  <p>© PRESET RACK</p>
-  <p>Envíos procesados 24/7</p>
-</footer>
-
-<div class="combo-bar" id="comboBar">
-  <div>
-    <b id="comboBarNames">—</b>
-    <span>Combo 2 presets seleccionado ($20.000)</span>
-  </div>
-  <button id="comboBarBtn">Confirmar Combo y Pagar</button>
-</div>
-
-<!-- VENTANITA EMERGENTE (MODAL) -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal-box">
-    <h3 id="modalTitle">Estás por comprar</h3>
-    <p id="modalDesc">Ingresá tu correo electrónico para recibir el archivo de forma automática al completarse el pago.</p>
-    
-    <div class="input-group">
-      <label for="userEmail">Tu Correo Electrónico:</label>
-      <input type="email" id="userEmail" placeholder="tucorreo@gmail.com">
-    </div>
-
-    <span class="important-note">⚠ IMPORTANTE: Una vez hecho el pago, revisá tu bandeja de entrada o la carpeta de SPAM, ahí te llega el archivo.</span>
-    
-    <button type="button" class="modal-action-btn btn-mp" id="btnMpDirect">Pagar en Mercado Pago</button>
-    
-    <div class="alt-pay">
-      ¿Querés pagar por otro medio? Hablame por Instagram: <a href="https://instagram.com/nadir.1880" target="_blank">@nadir.1880</a>
-    </div>
-
-    <button class="btn-close-modal" id="btnCloseModal">Cancelar</button>
-  </div>
-</div>
-
-<script>
-  const presets = [
-    "CERO ASTERISCO (yo pray)", "SLIMESANTI", "HUNTR", "JUANSSIN", "SHAKO", 
-    "CEROASTERISCO", "ENZOCEROBULTO", "ONEY1", "SALAS FLACO", "JOSHU JOSHU", 
-    "ROJUU (salsa valentina)", "OSAMASON/NETTSPEND", "SARAMALACARA x CAPOXXO", 
-    "ZELL 2.0", "STARBOY/GUNNR", "NEW JAZZ (underaiki)", "TURROBABY", 
-    "C.R.O", "LIL PEEP (your favorite dress)", "ROJUU (melasuda)", 
-    "DETROIT (mechayrxmeo)", "SWAGGERBOYZ", "ZELL", "LOLO MORALES", 
-    "GLOOSITO (DETROIT)", "SARAMALACARA", "HYPERPOP (CAPOXXO)", "PLUGGNB"
-  ];
-
-  const list = document.getElementById('list');
-  let selected = [];
-
-  let currentPresetToBuy = [];
-
-  const comboCount = document.getElementById('comboCount');
-  const comboBar = document.getElementById('comboBar');
-  const comboBarNames = document.getElementById('comboBarNames');
-  const comboBarBtn = document.getElementById('comboBarBtn');
-  
-  const modalOverlay = document.getElementById('modalOverlay');
-  const modalTitle = document.getElementById('modalTitle');
-  const modalDesc = document.getElementById('modalDesc');
-  const userEmail = document.getElementById('userEmail');
-  const btnMpDirect = document.getElementById('btnMpDirect');
-  const btnCloseModal = document.getElementById('btnCloseModal');
-
-  function openIndividualModal(presetName) {
-    currentPresetToBuy = [presetName];
-    modalTitle.textContent = "Comprar: " + presetName;
-    modalDesc.innerHTML = `Preset seleccionado: <strong>${presetName}</strong> ($12.000).`;
-    userEmail.value = "";
-    modalOverlay.classList.add('active');
-  }
-
-  function openComboModal(names) {
-    currentPresetToBuy = names;
-    modalTitle.textContent = "Combo 2 Presets — $20.000";
-    modalDesc.innerHTML = `Presets elegidos:<br>- <strong>${names[0]}</strong><br>- <strong>${names[1]}</strong>`;
-    userEmail.value = "";
-    modalOverlay.classList.add('active');
-  }
-
-  btnCloseModal.addEventListener('click', () => modalOverlay.classList.remove('active'));
-  modalOverlay.addEventListener('click', (e) => { if(e.target === modalOverlay) modalOverlay.classList.remove('active'); });
-
-  function refreshCombo(){
-    comboCount.textContent = selected.length + "/2 elegidos";
-    if(selected.length === 2){
-      const names = selected.map(i => presets[i]);
-      comboBarNames.textContent = names.join("  +  ");
-      comboBar.classList.add('show');
-    } else {
-      comboBar.classList.remove('show');
+  try {
+    const r = await fetch(
+      'https://api.mercadopago.com/v1/payments/search?sort=date_created&criteria=desc&limit=30',
+      { headers: { Authorization: `Bearer ${env.MP_TOKEN}` } }
+    );
+    const data = await r.json();
+    if (!r.ok) {
+      return new Response('Error de Mercado Pago ' + r.status + ': ' + JSON.stringify(data), { status: 502, headers });
     }
+
+    const results = data.results || [];
+    if (results.length === 0) {
+      return new Response('Mercado Pago no devolvió ningún pago para este token.', { status: 200, headers });
+    }
+
+    const lines = results.map(p => [
+      p.date_created,
+      'ID ' + p.id,
+      p.live_mode === false ? 'PRUEBA' : 'REAL',
+      p.status + '/' + p.status_detail,
+      '$' + p.transaction_amount,
+      p.payer?.email || '(sin mail)',
+      p.metadata?.presets || p.description || '(sin detalle)',
+      p.money_release_date ? 'liberación: ' + p.money_release_date : ''
+    ].join(' | '));
+
+    return new Response(lines.join('\n'), { status: 200, headers });
+  } catch (err) {
+    return new Response('Error: ' + err.message, { status: 500, headers });
   }
-
-  presets.forEach((name, i) => {
-    const row = document.createElement('div');
-    row.className = 'channel';
-    row.innerHTML = `<div class="ch-num mono">${String(i+1).padStart(2,'0')}</div><div class="ch-name">${name}</div><div class="ch-price mono">$12.000</div><button class="buy-btn">Comprar</button>`;
-
-    const buyBtn = row.querySelector('.buy-btn');
-    buyBtn.addEventListener('click', (e) => {
-      e.stopPropagation(); 
-      openIndividualModal(name);
-    });
-
-    row.addEventListener('click', () => {
-      const idx = selected.indexOf(i);
-      if(idx !== -1){
-        selected.splice(idx, 1);
-        row.classList.remove('selected');
-      } else {
-        if(selected.length === 2){
-          const removedIndex = selected.shift();
-          document.querySelectorAll('.channel')[removedIndex].classList.remove('selected');
-        }
-        selected.push(i);
-        row.classList.add('selected');
-      }
-      refreshCombo();
-    });
-    list.appendChild(row);
-  });
-
-  comboBarBtn.addEventListener('click', () => {
-    const names = selected.map(i => presets[i]);
-    openComboModal(names);
-  });
-
-  // Conexión dinámica con el backend /comprar para enviar metadatos y automatizar envíos
-  btnMpDirect.addEventListener('click', async () => {
-    const email = userEmail.value.trim();
-    if (!email || !email.includes('@')) {
-      alert('Por favor ingresá un correo electrónico válido.');
-      return;
-    }
-    
-    btnMpDirect.textContent = 'Generando pago...';
-    btnMpDirect.style.opacity = '0.7';
-    btnMpDirect.disabled = true;
-
-    try {
-      const res = await fetch('/comprar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          presets: currentPresetToBuy,
-          email: email
-        })
-      });
-      const data = await res.json();
-      if (res.ok && data.url) {
-        window.location.href = data.url;
-      } else {
-        alert(data.error || 'No se pudo crear el pago. Intentá nuevamente.');
-        btnMpDirect.textContent = 'Pagar en Mercado Pago';
-        btnMpDirect.style.opacity = '1';
-        btnMpDirect.disabled = false;
-      }
-    } catch (err) {
-      alert('Error de conexión. Intentá nuevamente.');
-      btnMpDirect.textContent = 'Pagar en Mercado Pago';
-      btnMpDirect.style.opacity = '1';
-      btnMpDirect.disabled = false;
-    }
-  });
-</script>
-</body>
-</html>
+}
