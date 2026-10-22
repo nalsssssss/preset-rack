@@ -2,6 +2,9 @@
 // Crea una preferencia de Mercado Pago con el mail del comprador y los presets elegidos.
 // Precios sincronizados con la web ($12.000 c/u, combo $20.000).
 
+// Mismo catálogo que usa el webhook para entregar: si un preset no está ahí, no se cobra.
+import { linksDrive } from './webhook/index.js';
+
 const PRECIO_INDIVIDUAL = 12000;
 const PRECIO_2X1 = 20000;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -18,6 +21,12 @@ export async function onRequestPost(context) {
     const email = String(data.email || '').trim();
 
     if (presets.length < 1 || presets.length > 2) return json({ error: 'Elegí 1 o 2 presets' }, 400);
+    if (new Set(presets).size !== presets.length) return json({ error: 'Elegí dos presets distintos' }, 400);
+    const desconocido = presets.find(p => !linksDrive[p]);
+    if (desconocido) {
+      console.error('Preset fuera del catálogo', desconocido);
+      return json({ error: 'Ese preset no está disponible ahora. Escribinos por Instagram.' }, 400);
+    }
     if (!EMAIL_RE.test(email)) return json({ error: 'Correo inválido' }, 400);
 
     const isCombo = presets.length === 2;
