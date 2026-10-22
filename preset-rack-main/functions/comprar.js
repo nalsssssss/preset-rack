@@ -1,9 +1,9 @@
 // Cloudflare Pages Function — responde en /comprar
 // Crea una preferencia de Mercado Pago con el mail del comprador y los presets elegidos.
-// Los precios se definen ACÁ (no se confía en lo que manda el navegador).
+// Precios sincronizados con la web ($12.000 c/u, combo $20.000).
 
-const PRECIO_INDIVIDUAL = 15000;
-const PRECIO_2X1 = 27000;
+const PRECIO_INDIVIDUAL = 12000;
+const PRECIO_2X1 = 20000;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 const json = (obj, status = 200) =>
