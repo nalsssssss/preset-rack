@@ -49,7 +49,6 @@
   .logo .dot{ width:9px; height:9px; border-radius:50%; background:var(--rec); }
   nav a{ color:var(--ink); text-decoration:none; font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; opacity:.6; margin-left:22px; }
   
-  /* HERO CON VIDEO INCORPORADO AL LADO */
   .hero{ padding:9vh 6vw 7vh; border-bottom:1px solid var(--line); display:grid; grid-template-columns: 1.1fr 0.9fr; gap:40px; align-items:center; }
   .hero-content max-width{ max-width:52ch; }
   .eyebrow{ font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--mute); display:flex; align-items:center; gap:8px; margin-bottom:18px; }
@@ -188,7 +187,7 @@
 
     <span class="important-note">⚠ IMPORTANTE: Una vez hecho el pago, revisá tu bandeja de entrada o la carpeta de SPAM, ahí te llega el archivo.</span>
     
-    <a href="#" class="modal-action-btn btn-mp" id="btnMpDirect" target="_blank">Pagar en Mercado Pago</a>
+    <button type="button" class="modal-action-btn btn-mp" id="btnMpDirect">Pagar en Mercado Pago</button>
     
     <div class="alt-pay">
       ¿Querés pagar por otro medio? Hablame por Instagram: <a href="https://instagram.com/nadir.1880" target="_blank">@nadir.1880</a>
@@ -199,9 +198,6 @@
 </div>
 
 <script>
-  const LINK_1 = "https://mpago.la/15TL2rV";  // $12.000
-  const LINK_2X1 = "https://mpago.la/1epcAYR"; // $20.000 (Combo 2 presets)
-
   const presets = [
     "CERO ASTERISCO (yo pray)", "SLIMESANTI", "HUNTR", "JUANSSIN", "SHAKO", 
     "CEROASTERISCO", "ENZOCEROBULTO", "ONEY1", "SALAS FLACO", "JOSHU JOSHU", 
@@ -214,6 +210,8 @@
 
   const list = document.getElementById('list');
   let selected = [];
+
+  let currentPresetToBuy = [];
 
   const comboCount = document.getElementById('comboCount');
   const comboBar = document.getElementById('comboBar');
@@ -228,17 +226,17 @@
   const btnCloseModal = document.getElementById('btnCloseModal');
 
   function openIndividualModal(presetName) {
+    currentPresetToBuy = [presetName];
     modalTitle.textContent = "Comprar: " + presetName;
     modalDesc.innerHTML = `Preset seleccionado: <strong>${presetName}</strong> ($12.000).`;
-    btnMpDirect.href = LINK_1;
     userEmail.value = "";
     modalOverlay.classList.add('active');
   }
 
   function openComboModal(names) {
+    currentPresetToBuy = names;
     modalTitle.textContent = "Combo 2 Presets — $20.000";
     modalDesc.innerHTML = `Presets elegidos:<br>- <strong>${names[0]}</strong><br>- <strong>${names[1]}</strong>`;
-    btnMpDirect.href = LINK_2X1;
     userEmail.value = "";
     modalOverlay.classList.add('active');
   }
@@ -289,6 +287,44 @@
   comboBarBtn.addEventListener('click', () => {
     const names = selected.map(i => presets[i]);
     openComboModal(names);
+  });
+
+  // Conexión dinámica con el backend /comprar para enviar metadatos y automatizar envíos
+  btnMpDirect.addEventListener('click', async () => {
+    const email = userEmail.value.trim();
+    if (!email || !email.includes('@')) {
+      alert('Por favor ingresá un correo electrónico válido.');
+      return;
+    }
+    
+    btnMpDirect.textContent = 'Generando pago...';
+    btnMpDirect.style.opacity = '0.7';
+    btnMpDirect.disabled = true;
+
+    try {
+      const res = await fetch('/comprar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          presets: currentPresetToBuy,
+          email: email
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || 'No se pudo crear el pago. Intentá nuevamente.');
+        btnMpDirect.textContent = 'Pagar en Mercado Pago';
+        btnMpDirect.style.opacity = '1';
+        btnMpDirect.disabled = false;
+      }
+    } catch (err) {
+      alert('Error de conexión. Intentá nuevamente.');
+      btnMpDirect.textContent = 'Pagar en Mercado Pago';
+      btnMpDirect.style.opacity = '1';
+      btnMpDirect.disabled = false;
+    }
   });
 </script>
 </body>
