@@ -124,6 +124,47 @@
     .combo-bar{ flex-direction:column; align-items:flex-start; }
     .combo-bar button{ width:100%; }
   }
+
+  /* MI TOP 4 — reproductor compacto antes / después */
+  :root{ --wave:#3fd0e6; }
+  .top4{ padding:6vh 6vw 0; }
+  .top4-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:14px; border-bottom:1px solid var(--line); padding-bottom:14px; }
+  .top4-head h2{ font-size:15px; letter-spacing:.04em; }
+  .top4-head span{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--mute); }
+  .top4-desc{ color:var(--mute); font-size:14px; line-height:1.6; padding:14px 0 18px; max-width:60ch; text-shadow:0 1px 4px rgba(0,0,0,0.5); }
+  .top-row{ display:grid; grid-template-columns:44px minmax(240px,300px) 1fr 90px 130px; align-items:center; gap:18px; padding:14px; border-bottom:1px solid var(--line); background:rgba(12,12,12,0.4); transition:background .15s ease; }
+  .top-row.playing{ background:rgba(30,30,30,0.85); box-shadow:inset 3px 0 0 var(--ink); }
+  .top-row.playing .top-num{ color:var(--ink); font-weight:700; }
+  .top-num{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--mute); }
+  .top-row{ cursor:pointer; }
+  .top-row:hover{ background:rgba(30,30,30,0.7); }
+  .top-row.selected{ background:rgba(30,30,30,0.85); box-shadow:inset 3px 0 0 var(--ink); }
+  .top-row.selected .top-num{ color:var(--ink); font-weight:700; }
+  .tp-line{ display:flex; align-items:center; gap:10px; }
+  .tp-play{ width:34px; height:34px; flex:none; border-radius:50%; border:none; background:var(--ink); color:var(--bg); display:grid; place-items:center; cursor:pointer; transition:opacity .15s ease; }
+  .tp-play:hover{ opacity:.8; }
+  .tp-play svg{ width:11px; height:11px; fill:currentColor; }
+  .tp-wave{ position:relative; flex:1; min-width:0; height:30px; cursor:pointer; }
+  .tp-bars{ position:absolute; inset:0; display:flex; align-items:center; gap:1px; }
+  .tp-bars i{ flex:1; min-width:1px; border-radius:1px; background:#8d8d8d; }
+  .tp-fill{ clip-path:inset(0 100% 0 0); }
+  .tp-fill i{ background:var(--wave); }
+  .tp-head{ position:absolute; top:0; bottom:0; left:0; width:2px; background:var(--wave); pointer-events:none; }
+  .tp-meta{ display:flex; justify-content:space-between; align-items:center; margin-top:7px; }
+  .tp-toggle{ display:inline-flex; padding:2px; border:1px solid var(--line); border-radius:999px; background:#0a0a0a; }
+  .tp-toggle button{ font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:.06em; text-transform:uppercase; padding:4px 10px; border:none; border-radius:999px; background:transparent; color:var(--mute); cursor:pointer; }
+  .tp-toggle button[aria-checked="true"]{ background:var(--ink); color:var(--bg); }
+  .tp-time{ font-family:'JetBrains Mono', monospace; font-size:10.5px; color:var(--mute); }
+  .tp-time .cur{ color:var(--wave); }
+  .tp-play:focus-visible, .tp-wave:focus-visible, .tp-toggle button:focus-visible{ outline:2px solid var(--ink); outline-offset:2px; }
+  @media (max-width:960px){
+    .top-row{ grid-template-columns:28px 1fr; grid-template-areas:"num name" "num price" "buy buy" "tp tp"; row-gap:10px; padding:20px 4px; }
+    .top-num{ grid-area:num; }
+    .top-row .ch-name{ grid-area:name; }
+    .top-row .ch-price{ grid-area:price; }
+    .top-row .buy-btn{ grid-area:buy; }
+    .tp{ grid-area:tp; }
+  }
 </style>
 </head>
 <body>
@@ -140,14 +181,14 @@
     <p>Cadenas de plugins listas para cargar. Elegí tu preset, pagá de forma segura y recibí el contenido al instante.</p>
   </div>
   <div class="hero-video-box">
-    <iframe src="https://www.youtube.com/embed/0ixpB5zpAgo" title="Video explicativo" allowfullscreen></iframe>
+    <iframe src="https://www.youtube.com/embed/0ixpB5zpAgo" title="Video explicativo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
   </div>
 </section>
 
 <div class="combo" id="comboBanner">
   <div class="combo-txt">
     <b>Llevate 2 presets por $20.000</b>
-    <span class="mono" id="comboHint">Tocá dos presets de la lista de abajo para elegirlos</span>
+    <span class="mono" id="comboHint">Tocá dos presets (del top o de la lista) para elegirlos</span>
   </div>
   <span class="mono" id="comboCount" style="opacity:.7;">0/2 elegidos</span>
 </div>
@@ -156,10 +197,19 @@
   Máximo 2 presets por compra. ¿Querés más? Hacés otra compra aparte.
 </p>
 
+<section class="top4" id="top4">
+  <div class="top4-head">
+    <h2>MI TOP 4</h2>
+    <span class="mono">antes / después</span>
+  </div>
+  <p class="top4-desc">Este es, a mi parecer, el top 4 de las mezclas. Cada artista tiene lo suyo, jeje</p>
+  <div id="topList"></div>
+</section>
+
 <section class="rack" id="rack">
   <div class="rack-head">
     <h2>Catálogo — $12.000 c/u</h2>
-    <span class="mono" id="count">28 presets</span>
+    <span class="mono" id="count">24 presets</span>
   </div>
   <div id="list"></div>
 </section>
@@ -209,7 +259,7 @@
 
 <script>
   const presets = [
-    "CERO ASTERISCO (yo pray)", "SLIMESANTI", "HUNTR", "JUANSSIN", "SHAKO", 
+    "SLIMESANTI", 
     "CEROASTERISCO", "ENZOCEROBULTO", "ONEY1", "SALAS FLACO", "JOSHU JOSHU", 
     "ROJUU (salsa valentina)", "OSAMASON/NETTSPEND", "SARAMALACARA x CAPOXXO", 
     "ZELL 2.0", "STARBOY/GUNNR", "NEW JAZZ (underaiki)", "TURROBABY", 
@@ -220,6 +270,7 @@
 
   const list = document.getElementById('list');
   let selected = [];
+  const selectRows = {};
 
   let currentPresetToBuy = [];
 
@@ -289,12 +340,29 @@
   function refreshCombo(){
     comboCount.textContent = selected.length + "/2 elegidos";
     if(selected.length === 2){
-      const names = selected.map(i => presets[i]);
+      const names = selected.slice();
       comboBarNames.textContent = names.join("  +  ");
       comboBar.classList.add('show');
     } else {
       comboBar.classList.remove('show');
     }
+  }
+
+  // Elegir / sacar un preset del combo 2x1 (vale para la lista y para el MI TOP 4)
+  function toggleCombo(name, row){
+    const idx = selected.indexOf(name);
+    if(idx !== -1){
+      selected.splice(idx, 1);
+      row.classList.remove('selected');
+    } else {
+      if(selected.length === 2){
+        const removed = selected.shift();
+        selectRows[removed].classList.remove('selected');
+      }
+      selected.push(name);
+      row.classList.add('selected');
+    }
+    refreshCombo();
   }
 
   presets.forEach((name, i) => {
@@ -308,26 +376,13 @@
       openIndividualModal(name);
     });
 
-    row.addEventListener('click', () => {
-      const idx = selected.indexOf(i);
-      if(idx !== -1){
-        selected.splice(idx, 1);
-        row.classList.remove('selected');
-      } else {
-        if(selected.length === 2){
-          const removedIndex = selected.shift();
-          document.querySelectorAll('.channel')[removedIndex].classList.remove('selected');
-        }
-        selected.push(i);
-        row.classList.add('selected');
-      }
-      refreshCombo();
-    });
+    selectRows[name] = row;
+    row.addEventListener('click', () => toggleCombo(name, row));
     list.appendChild(row);
   });
 
   comboBarBtn.addEventListener('click', () => {
-    const names = selected.map(i => presets[i]);
+    const names = selected.slice();
     openComboModal(names);
   });
 
@@ -371,6 +426,165 @@
       resetPayButton();
     }
   });
+</script>
+
+<script>
+  // MI TOP 4: un reproductor compacto por preset (antes / después)
+  (function () {
+    const topMezclas = [{"name":"JUANSSIN","raw":{"src":"Juanssin_RAW.wav","peaks":[0.31,0.37,0.64,0.32,0.46,0.41,0.36,0.34,0.36,0.43,0.39,0.28,0.27,0.33,0.3,0.32,0.27,0.23,0.82,0.85,0.82,0.87,0.76,0.72,0.64,0.39,0.38,0.36,0.38,0.38,0.62,0.85,0.78,0.57,0.27,0.28,0.28,0.2,0.83,0.89,0.83,1.0,0.82,0.57,0.64,0.59,0.49,0.36,0.43,0.49,0.69,0.9,0.82,0.53,0.85,0.88,0.79,0.68,0.94,0.89,0.84,0.84,0.77,0.6],"dur":9.654},"fx":{"src":"Juanssin.wav","peaks":[0.32,0.35,0.32,0.31,0.35,0.34,0.33,0.32,0.34,0.33,0.3,0.36,0.32,0.33,0.28,0.32,0.27,0.47,0.98,0.88,0.94,0.92,0.83,0.75,0.59,0.34,0.32,0.35,0.34,0.33,0.98,0.89,0.74,0.31,0.32,0.33,0.29,0.88,0.93,0.92,0.94,0.85,0.62,0.36,0.33,0.4,0.28,0.35,0.43,0.84,0.97,0.89,0.44,1.0,0.93,0.84,0.84,0.94,0.87,0.95,0.89,0.84,0.34,0.08],"dur":9.875}},{"name":"CERO ASTERISCO (yo pray)","raw":{"src":"Cero__YO_PRAY__RAW.wav","peaks":[0.59,0.57,0.53,0.53,0.54,0.52,0.58,0.33,0.56,0.6,0.5,0.47,0.49,0.49,0.3,0.46,0.57,0.59,0.55,0.56,0.91,0.91,0.8,0.63,0.49,0.17,0.21,1.0,0.92,0.82,0.65,0.75,0.94,0.91,0.94,0.94,0.96,0.93,0.87,0.92,0.88,0.72,0.57,0.45,0.31,0.78,0.95,0.89,0.75,0.6,0.94,0.95,0.78,0.51,0.5,0.52,0.54,0.94,0.91,0.84,0.63,0.55,0.29,0.19],"dur":12.768},"fx":{"src":"Cero__YO_PRAY_.wav","peaks":[0.57,0.55,0.55,0.58,0.58,0.57,0.46,0.49,0.65,0.59,0.62,0.55,0.52,0.49,0.63,0.64,0.57,0.63,0.89,0.87,0.76,0.63,0.48,0.2,0.84,1.0,0.82,0.69,0.77,0.86,0.87,0.87,0.89,0.95,0.84,0.85,0.81,0.75,0.63,0.48,0.35,0.82,0.9,0.84,0.69,0.78,0.91,0.8,0.54,0.56,0.57,0.74,0.96,0.9,0.72,0.62,0.46,0.36,0.08,0.08,0.08,0.08,0.08,0.08],"dur":14.067}},{"name":"SHAKO","raw":{"src":"shako_RAW.wav","peaks":[0.08,0.08,0.86,0.95,0.8,0.65,0.87,0.95,0.83,0.75,0.91,0.67,0.51,0.37,0.26,0.81,0.57,0.44,0.3,0.84,0.52,0.21,0.41,0.89,0.8,0.66,0.64,0.89,0.87,0.81,0.86,0.82,0.47,0.42,0.37,0.59,0.77,0.47,0.46,0.67,0.72,0.45,0.33,0.86,0.81,0.48,0.35,0.88,0.69,0.34,0.33,0.96,0.77,0.46,0.28,1.0,0.72,0.42,0.38,0.65,0.23,0.08,0.08,0.08],"dur":12.339},"fx":{"src":"Shako.wav","peaks":[0.08,0.08,0.73,0.8,0.69,0.6,0.77,0.87,0.85,0.77,0.89,0.67,0.5,0.4,0.4,0.82,0.58,0.45,0.38,0.84,0.54,0.23,0.46,0.88,0.79,0.64,0.62,0.84,0.85,0.78,0.83,0.8,0.45,0.5,0.43,0.63,0.74,0.47,0.51,0.68,0.71,0.47,0.37,0.8,0.77,0.49,0.43,0.88,0.67,0.41,0.34,0.92,0.74,0.46,0.34,1.0,0.71,0.44,0.54,0.93,0.68,0.47,0.35,0.3],"dur":12.348}},{"name":"HUNTR","raw":{"src":"huntr_RAW.wav","peaks":[0.32,0.32,0.41,0.71,0.57,0.52,0.26,0.33,0.76,0.69,0.55,0.29,0.3,0.46,0.41,0.34,0.36,0.41,0.4,0.67,0.78,0.8,0.8,0.76,0.74,0.74,0.8,0.82,0.8,0.81,0.82,0.81,0.82,0.84,0.83,0.78,0.41,0.7,0.52,0.7,0.87,0.84,1.0,0.89,0.91,0.99,0.96,0.97,0.92,0.94,0.89,0.87,0.89,0.91,0.91,0.9,0.94,0.95,0.95,0.86,0.78,0.79,0.78,0.63],"dur":17.152},"fx":{"src":"huntr.wav","peaks":[0.48,0.46,0.51,0.53,0.5,0.46,0.44,0.48,0.54,0.52,0.51,0.35,0.49,0.43,0.44,0.48,0.42,0.47,0.7,0.87,0.88,0.87,0.83,0.8,0.8,0.89,0.89,0.89,0.92,0.88,0.9,0.89,0.89,0.9,0.71,0.59,0.58,0.57,0.93,0.91,0.89,0.94,0.98,0.98,0.99,0.98,0.99,1.0,0.94,0.97,0.98,1.0,0.98,0.99,0.99,0.98,0.98,0.88,0.87,0.87,0.83,0.18,0.08,0.08],"dur":17.875}}];
+
+    const topList = document.getElementById('topList');
+    const ICON_PLAY  = '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5l9 5.5-9 5.5z"/></svg>';
+    const ICON_PAUSE = '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2.5 1.5h3.2v11H2.5zM8.3 1.5h3.2v11H8.3z"/></svg>';
+    const MODES = ['raw', 'fx'];
+    const LABEL = { raw: 'Original', fx: 'Procesado' };
+    const rows = [];
+
+    const fmt = (s) => { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+    const active = (r) => r.audio[r.mode];
+    const isPlaying = (r) => MODES.some(k => !r.audio[k].paused);
+    const total = (r) => { const a = active(r); return (isFinite(a.duration) && a.duration > 0) ? a.duration : r.info[r.mode].dur; };
+
+    function paint(r) {
+      const d = total(r);
+      const frac = d ? Math.min(1, r.pos / d) : 0;
+      r.fill.style.clipPath = 'inset(0 ' + ((1 - frac) * 100) + '% 0 0)';
+      r.head.style.left = 'calc(' + (frac * 100) + '% - 1px)';
+      r.cur.textContent = fmt(r.pos);
+      r.tot.textContent = fmt(Math.round(d));
+      r.wave.setAttribute('aria-valuenow', Math.round(frac * 100));
+    }
+
+    function refreshUI(r) {
+      const on = isPlaying(r);
+      r.btn.innerHTML = on ? ICON_PAUSE : ICON_PLAY;
+      r.btn.setAttribute('aria-label', (on ? 'Pausar ' : 'Reproducir ') + r.name);
+      r.el.classList.toggle('playing', on);
+    }
+
+    function renderBars(r) {
+      const html = r.info[r.mode].peaks.map(p => '<i style="height:' + Math.round(p * 100) + '%"></i>').join('');
+      r.base.innerHTML = html;
+      r.fillBars.innerHTML = html;
+    }
+
+    function start(r) {
+      rows.forEach(x => {
+        if (x !== r) { x.token++; MODES.forEach(k => { if (!x.audio[k].paused) x.audio[k].pause(); }); }
+      });
+      const a = active(r);
+      const token = ++r.token;
+      const pos = r.pos;
+      const go = () => {
+        if (token !== r.token) return;
+        try { a.currentTime = Math.max(0, Math.min(pos, total(r) - 0.05)); } catch (e) {}
+        a.play().catch(() => refreshUI(r));
+      };
+      if (a.readyState >= 1) go();
+      else { a.addEventListener('loadedmetadata', go, { once: true }); a.load(); }
+    }
+
+    function setMode(r, mode) {
+      if (r.mode === mode) return;
+      const wasPlaying = isPlaying(r);
+      r.token++;
+      MODES.forEach(k => { if (!r.audio[k].paused) r.audio[k].pause(); });
+      r.mode = mode;
+      r.toggle.forEach(b => b.setAttribute('aria-checked', b.dataset.mode === mode ? 'true' : 'false'));
+      renderBars(r);
+      paint(r);
+      refreshUI(r);
+      if (wasPlaying) start(r);   // sigue desde el mismo segundo
+    }
+
+    topMezclas.forEach((m, i) => {
+      const el = document.createElement('div');
+      el.className = 'top-row';
+      el.innerHTML =
+        '<div class="top-num mono">' + String(i + 1).padStart(2, '0') + '</div>' +
+        '<div class="tp">' +
+          '<div class="tp-line">' +
+            '<button type="button" class="tp-play"></button>' +
+            '<div class="tp-wave" role="slider" tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">' +
+              '<div class="tp-bars tp-base"></div><div class="tp-bars tp-fill"></div><div class="tp-head"></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="tp-meta">' +
+            '<div class="tp-toggle" role="radiogroup" aria-label="Versión">' +
+              '<button type="button" role="radio" data-mode="raw" aria-checked="true">Antes</button>' +
+              '<button type="button" role="radio" data-mode="fx" aria-checked="false">Después</button>' +
+            '</div>' +
+            '<span class="tp-time"><span class="cur">0:00</span> / <span class="tot">0:00</span></span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ch-name"></div>' +
+        '<div class="ch-price mono">$12.000</div>' +
+        '<button type="button" class="buy-btn">Comprar</button>';
+      el.querySelector('.ch-name').textContent = m.name;
+      el.querySelector('.buy-btn').addEventListener('click', () => openIndividualModal(m.name));
+      selectRows[m.name] = el;
+      el.addEventListener('click', (e) => {
+        if (e.target.closest('.tp, .buy-btn')) return;
+        toggleCombo(m.name, el);
+      });
+
+      const audio = {};
+      MODES.forEach(k => { const a = new Audio(); a.preload = 'none'; a.src = m[k].src; audio[k] = a; });
+
+      const r = {
+        el, name: m.name, info: m, audio, mode: 'raw', pos: 0, token: 0,
+        btn: el.querySelector('.tp-play'),
+        wave: el.querySelector('.tp-wave'),
+        base: el.querySelector('.tp-base'),
+        fillBars: el.querySelector('.tp-fill'),
+        fill: el.querySelector('.tp-fill'),
+        head: el.querySelector('.tp-head'),
+        cur: el.querySelector('.cur'),
+        tot: el.querySelector('.tot'),
+        toggle: Array.from(el.querySelectorAll('.tp-toggle button'))
+      };
+      r.wave.setAttribute('aria-label', 'Posición — ' + m.name);
+      rows.push(r);
+      renderBars(r);
+      refreshUI(r);
+      paint(r);
+
+      MODES.forEach(k => {
+        const a = audio[k];
+        a.addEventListener('play',  () => refreshUI(r));
+        a.addEventListener('pause', () => refreshUI(r));
+        a.addEventListener('error', () => refreshUI(r));
+        a.addEventListener('timeupdate', () => { if (a === active(r) && !a.paused) { r.pos = a.currentTime; paint(r); } });
+        a.addEventListener('loadedmetadata', () => { if (a === active(r)) paint(r); });
+        a.addEventListener('ended', () => { r.pos = 0; a.currentTime = 0; paint(r); refreshUI(r); });
+      });
+
+      r.btn.addEventListener('click', () => {
+        if (isPlaying(r)) { r.token++; MODES.forEach(k => audio[k].pause()); }
+        else start(r);
+      });
+
+      r.toggle.forEach(b => b.addEventListener('click', () => setMode(r, b.dataset.mode)));
+
+      r.wave.addEventListener('click', (e) => {
+        const rect = r.wave.getBoundingClientRect();
+        const frac = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+        r.pos = frac * total(r);
+        paint(r);
+        start(r);
+      });
+
+      r.wave.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+        e.preventDefault();
+        r.pos = Math.max(0, Math.min(r.pos + (e.key === 'ArrowRight' ? 2 : -2), total(r) - 0.05));
+        if (isPlaying(r) && active(r).readyState >= 1) active(r).currentTime = r.pos;
+        paint(r);
+      });
+
+      topList.appendChild(el);
+    });
+  })();
 </script>
 </body>
 </html>
